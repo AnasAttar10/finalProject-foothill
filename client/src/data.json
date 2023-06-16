@@ -1,0 +1,18 @@
+{
+    "products":[
+        {"id":1 ,"productName" :"apple" , "productCode":"000" ,"productCategory":"fruits","productImage":"https://subzfresh.com/wp-content/uploads/2022/04/apple_158989157.jpg" ,"productPrice":5 , "unitOfMeasure":""},
+        {"id":2 ,"productName" :"banana" , "productCode":"000" ,"productCategory":"fruits","productImage":"https://m.media-amazon.com/images/I/51ebZJ+DR4L._AC_UF1000,1000_QL80_.jpg" ,"productPrice":6 , "unitOfMeasure":""},
+        {"id":3 ,"productName" :"carrot" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://seed2plant.in/cdn/shop/products/carrotseeds.jpg?v=1604032858" ,"productPrice":10 , "unitOfMeasure":""},
+        {"id":4 ,"productName" :"Cucumber" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://cdnprod.mafretailproxy.com/sys-master-root/h5f/hd1/48502207053854/1700Wx1700H_9304_main.jpg" ,"productPrice":15 , "unitOfMeasure":""},
+        {"id":5 ,"productName" :"chicken" , "productCode":"000" ,"productCategory":"chicken","productImage":"https://hadfnews.ps/img/h5NpR.jpg" ,"productPrice":20 , "unitOfMeasure":""},
+        {"id":6 ,"productName" :"chicken thighs" , "productCode":"000" ,"productCategory":"chicken","productImage":"https://cdnprod.mafretailproxy.com/sys-master-root/ha5/h15/30490438139934/31779_main.jpg_480Wx480H" ,"productPrice":25 , "unitOfMeasure":""},
+        {"id":7 ,"productName" :"chopped meat" , "productCode":"000" ,"productCategory":"meat","productImage":"https://izzycooking.com/wp-content/uploads/2021/11/Defrosting-ground-beef-thumbnail-1.jpg" ,"productPrice":30 , "unitOfMeasure":""},
+        {"id":8 ,"productName" :"cheetos" , "productCode":"000" ,"productCategory":"888","productImage":"https://images.heb.com/is/image/HEBGrocery/001962877-1?jpegSize=150&hei=1400&fit=constrain&qlt=75" ,"productPrice":5 , "unitOfMeasure":""},
+        {"id":9 ,"productName" :"doritos" , "productCode":"000" ,"productCategory":"888","productImage":"https://target.scene7.com/is/image/Target/GUEST_dd139ff5-c1ab-4071-9c2c-e7dd74d9251c?wid=488&hei=488&fmt=pjpeg" ,"productPrice":5 , "unitOfMeasure":""},
+        {"id":10 ,"productName" :"eggpiant" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://insanelygoodrecipes.com/wp-content/uploads/2020/03/eggplant.png" ,"productPrice":50 , "unitOfMeasure":""},
+        {"id":11 ,"productName" :"fanta" , "productCode":"000" ,"productCategory":"666","productImage":"https://www.coca-cola.co.uk/content/dam/one/gb/en/product/fanta-organe-600x400.jpg" ,"productPrice":3 , "unitOfMeasure":""},
+        {"id":12 ,"productName" :"fish" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://www.thelist.com/img/gallery/what-happens-to-your-body-when-you-stop-eating-fish/l-intro-1615430058.jpg" ,"productPrice":70 , "unitOfMeasure":""},
+        {"id":13 ,"productName" :"eggpiant" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://insanelygoodrecipes.com/wp-content/uploads/2020/03/eggplant.png" ,"productPrice":50 , "unitOfMeasure":""},
+        {"id":14 ,"productName" :"eggpiant" , "productCode":"000" ,"productCategory":"vegetable","productImage":"https://insanelygoodrecipes.com/wp-content/uploads/2020/03/eggplant.png" ,"productPrice":50 , "unitOfMeasure":""}
+    ]
+}
