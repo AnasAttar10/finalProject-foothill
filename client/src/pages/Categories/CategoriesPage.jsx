@@ -1,19 +1,19 @@
 import Container from "../../components/Containerr/Container";
+import Modal from "../../components/Modal/Modal";
 import Table from "../../components/Table/Table";
+import AddCategories from "../../components/AddCategories/AddCategories";
+import React, { useState } from "react";
 import data from "../../data.json";
+import AddIcon from "@mui/icons-material/Add";
 import Filter from "../../components/Filter/Filter";
 import { Button } from "@mui/material";
-import AddProduct from "../../components/AddProduct/AddProduct";
-import Modal from "../../components/Modal/Modal";
-import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
-const ProductsPage = () => {
+const CategoriesPage = () => {
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
     setShowModal(false);
   };
 
-  const { products } = data;
+  const { Categories } = data;
   return (
     <>
       <div style={{ display: "flex", justifyContent: "end" }}>
@@ -23,13 +23,13 @@ const ProductsPage = () => {
           onClick={() => setShowModal(true)}
           sx={{ marginRight: 2 }}
         >
-          Add Product
+          Add Category
         </Button>
       </div>
       <Modal showModal={showModal} closeModal={closeModal}>
-        <AddProduct />
+        <AddCategories />
       </Modal>
-      <Container items={products} type="products">
+      <Container items={Categories} type="categories">
         <Filter />
         <Table />
       </Container>
@@ -37,4 +37,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default CategoriesPage;

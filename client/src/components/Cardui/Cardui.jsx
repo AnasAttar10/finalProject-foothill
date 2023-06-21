@@ -15,17 +15,17 @@ const Cardui = ({ product }) => {
         "&:hover": { bgcolor: theme.palette.activeLink.main, color: "white" },
       }}
     >
-      <CardHeader title={product.productName} />
+      <CardHeader title={product.name} />
       <LazyLoadImagee
-        alt={product.productName}
+        alt={product.name}
         height="120"
         width="200"
         effect="blur"
-        src={product.productImage}
+        src={product.Image}
       />
 
       <CardContent>
-        <Typography variant="h5">${product.productPrice}</Typography>
+        <Typography variant="h5">${product.Price}</Typography>
       </CardContent>
     </Card>
   );

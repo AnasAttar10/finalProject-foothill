@@ -3,6 +3,8 @@ import Cardui from "../Cardui/Cardui";
 import { ContainerContext } from "../Containerr/Container";
 const CardsContainer = ({ filterdProducts }) => {
   const { targetProducts } = useContext(ContainerContext);
+  console.log("inside card containers");
+  console.log(targetProducts);
   const displayProducts = () => {
     return targetProducts.map((p, index) => (
       <Cardui key={p.id} product={p} index={index} />

@@ -2,7 +2,7 @@ import React, { createContext, useState } from "react";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 export const ContainerContext = createContext();
-const Container = ({ children, products }) => {
+const Container = ({ children, items, type }) => {
   const [pageSize, setPageSize] = useState(6);
   const [page, setPage] = useState(1);
   const [filterdValue, setFilterdValue] = useState("");
@@ -24,15 +24,15 @@ const Container = ({ children, products }) => {
 
   const start = (page - 1) * pageSize;
   const end = page * pageSize;
-  const filterdProducts = products.filter((p) =>
-    p.productName.trim().toLowerCase().includes(filterdValue)
+  const filterdProducts = items.filter((i) =>
+    i.name.trim().toLowerCase().includes(filterdValue)
   );
   const targetProducts = filterdProducts.filter((p, index) => {
     return index >= start && index < end;
   });
   const canIncreasePageNumbering =
     Number.parseInt(filterdProducts.length / pageSize) + 1 !== page;
-  const value = { targetProducts, filterdValue, handleFilter };
+  const value = { targetProducts, filterdValue, handleFilter, type };
   return (
     <ContainerContext.Provider value={value}>
       <div>

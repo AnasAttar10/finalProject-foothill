@@ -1,7 +1,8 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Button, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import { Button } from "@mui/material";
+import Field from "../Field/Field";
 import Select from "../Select/Select";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import SaveIcon from "@mui/icons-material/Save";
@@ -44,88 +45,52 @@ const AddProduct = () => {
     <form onSubmit={formik.handleSubmit} style={{ padding: "10px" }}>
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Add Product</h2>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>productName</InputLabel>
-          <OutlinedInput
-            id="productName"
-            name="productName"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.productName}
-          />
-        </FormControl>
-        {formik.touched.productName && formik.errors.productName ? (
-          <div style={{ margin: "5px" }}>{formik.errors.productName}</div>
-        ) : null}
+        <Field
+          name="productName"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.productName}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.productName}
+          errors={formik.errors.productName}
+        />
       </div>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>productCode</InputLabel>
-          <OutlinedInput
-            id="productCode"
-            name="productCode"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.productCode}
-          />
-        </FormControl>
-        {formik.touched.productCode && formik.errors.productCode ? (
-          <div style={{ margin: "5px" }}>{formik.errors.productCode}</div>
-        ) : null}
+        <Field
+          name="productCode"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.productCode}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.productCode}
+          errors={formik.errors.productCode}
+        />
       </div>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>productPrice</InputLabel>
-          <OutlinedInput
-            id="productPrice"
-            name="productPrice"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.productPrice}
-          />
-        </FormControl>
-        {formik.touched.productPrice && formik.errors.productPrice ? (
-          <div style={{ margin: "5px" }}>{formik.errors.productPrice}</div>
-        ) : null}
+        <Field
+          name="productPrice"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.productPrice}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.productPrice}
+          errors={formik.errors.productPrice}
+        />
       </div>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>productImage</InputLabel>
-          <OutlinedInput
-            id="productImage"
-            name="productImage"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.productImage}
-          />
-        </FormControl>
-        {formik.touched.productImage && formik.errors.productImage ? (
-          <div style={{ margin: "5px" }}>{formik.errors.productImage}</div>
-        ) : null}
+        <Field
+          name="productImage"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.productImage}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.productImage}
+          errors={formik.errors.productImage}
+        />
       </div>
       <div>
         <Select
@@ -167,20 +132,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-
-/* <select
-            id="productCategory"
-            className="form-select form-select-lg mt-1 mb-3 w-100"
-            aria-label=".form-select-lg example"
-            name="productCategory"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.productCategory}
-          >
-            <option defaultValue>Choose The Category</option>
-            <option value="fruits">fruits</option>
-            <option value="vegetable">vegetable</option>
-            <option value="chicken">chicken</option>
-            <option value="meat">meat</option>
-          </select> 
-          */

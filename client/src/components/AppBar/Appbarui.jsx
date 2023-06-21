@@ -1,17 +1,46 @@
+import {
+  AppBar,
+  Avatar,
+  Button,
+  IconButton,
+  Toolbar,
+  Link,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import React from "react";
-import { AppBar, Button, Toolbar, Avatar, Link } from "@mui/material";
 
-const Appbarui = ({ drawerWidth }) => {
+const Appbarui = ({ drawerWidth, handleDrawerToggle }) => {
   return (
     <AppBar
-      position="static"
-      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      position="fixed"
+      sx={{
+        width: { sm: `calc(100% - ${drawerWidth}px)` },
+        ml: { sm: `${drawerWidth}px` },
+        color: "white",
+      }}
     >
       <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={handleDrawerToggle}
+          sx={{ mr: 2, display: { sm: "none" } }}
+        >
+          <MenuIcon />
+        </IconButton>
+        {/* <Typography variant="h6" noWrap component="div">
+        Responsive drawer
+      </Typography> */}
+        {/* added */}
         <Link
-          sx={{ flexGrow: 1, "&:hover": { fontSize: "16.5px" } }}
+          sx={{
+            flexGrow: 1,
+            "&:hover": { fontSize: "16.5px" },
+            color: "white",
+          }}
           underline="none"
-          color={"inherit"}
+          // color={"inherit"}
         >
           Anas Attar
         </Link>
@@ -26,6 +55,35 @@ const Appbarui = ({ drawerWidth }) => {
 };
 
 export default Appbarui;
+
+// import React from "react";
+// import { AppBar, Button, Toolbar, Avatar, Link } from "@mui/material";
+
+// const Appbarui = ({ drawerWidth }) => {
+//   return (
+//     <AppBar
+//       position="static"
+//       sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+//     >
+//       <Toolbar>
+//         <Link
+//           sx={{ flexGrow: 1, "&:hover": { fontSize: "16.5px" } }}
+//           underline="none"
+//           color={"inherit"}
+//         >
+//           Anas Attar
+//         </Link>
+//         <Button color="inherit">Login</Button>
+//         <Avatar
+//           alt="Remy Sharp"
+//           src="https://mui.com/static/images/avatar/2.jpg"
+//         />
+//       </Toolbar>
+//     </AppBar>
+//   );
+// };
+
+// export default Appbarui;
 
 // import * as React from "react";
 // import AppBar from "@mui/material/AppBar";

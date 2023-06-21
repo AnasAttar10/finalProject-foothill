@@ -3,6 +3,8 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import SaveIcon from "@mui/icons-material/Save";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import Field from "../Field/Field";
 const AddCategories = () => {
   const formik = useFormik({
     initialValues: {
@@ -27,46 +29,28 @@ const AddCategories = () => {
         Add Category{" "}
       </h2>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>categoryName</InputLabel>
-          <OutlinedInput
-            id="categoryName"
-            name="categoryName"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.categoryName}
-          />
-        </FormControl>
-        {formik.touched.categoryName && formik.errors.categoryName ? (
-          <div style={{ margin: "5px" }}>{formik.errors.categoryName}</div>
-        ) : null}
+        <Field
+          name="categoryName"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.categoryName}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.categoryName}
+          errors={formik.errors.categoryName}
+        />
       </div>
       <div>
-        <FormControl
-          position="start"
-          fullWidth
-          variant="outlined"
-          sx={{ p: 1 }}
-        >
-          <InputLabel>categoryImage</InputLabel>
-          <OutlinedInput
-            id="categoryImage"
-            name="categoryImage"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.categoryImage}
-          />
-        </FormControl>
-        {formik.touched.categoryImage && formik.errors.categoryImage ? (
-          <div style={{ margin: "5px" }}>{formik.errors.categoryImage}</div>
-        ) : null}
+        <Field
+          name="categoryImage"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.categoryImage}
+        />
+        <ErrorMessage
+          isTouched={formik.touched.categoryImage}
+          errors={formik.errors.categoryImage}
+        />
       </div>
       <Button
         variant="contained"

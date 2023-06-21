@@ -2,8 +2,6 @@ import { FormControl } from "@mui/material";
 import React from "react";
 
 const Select = ({ name, handleChange, handleBlur, values, options }) => {
-  console.log("select");
-  console.log(values);
   return (
     <FormControl position="start" fullWidth variant="outlined" sx={{ p: 1 }}>
       <label htmlFor={name}>{name}</label>

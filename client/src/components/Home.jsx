@@ -9,6 +9,7 @@ import AddProduct from "./AddProduct/AddProduct";
 import AddCategories from "./AddCategories/AddCategories";
 import { Box } from "@mui/material";
 import Modal from "./Modal/Modal";
+import MyCart from "./MyCart/MyCart";
 const Home = () => {
   return (
     <div>
@@ -18,10 +19,11 @@ const Home = () => {
       ))} */}
       {/* <Table prodcts={data.products} /> */}
 
-      <Container products={data.products}>
+      {/* <Container items={data.products}>
         <Filter />
         <CardsContainer />
-      </Container>
+      </Container> */}
+      {/* <AddCategories /> */}
       {/* <Container products={data.products}>
         <Table />
       </Container> */}

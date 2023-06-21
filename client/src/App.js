@@ -9,6 +9,8 @@ import Create from "./components/Create";
 import { useState } from "react";
 import "./App.css";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
+import CategoriesPage from "./pages/Categories/CategoriesPage";
+import MyCart from "./components/MyCart/MyCart";
 const App = () => {
   const [modee, setModee] = useState("light");
   const darkTheme = createTheme({
@@ -50,7 +52,15 @@ const App = () => {
           >
             <Route index element={<Home />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="categories" element={<CategoriesPage />} />
           </Route>
+          <Route
+            path="/admin"
+            // element={<MyCart changeTheMode={changeTheMode} modee={modee} />}
+            element={
+              <ResponsiveDrawer changeTheMode={changeTheMode} modee={modee} />
+            }
+          />
         </Routes>
       </ThemeProvider>
     </div>
