@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { Card, CardContent, CardHeader, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 
 import React from "react";
 import LazyLoadImagee from "../LazyLoadImage/LazyLoadImage";
@@ -15,18 +15,16 @@ const Cardui = ({ product }) => {
         "&:hover": { bgcolor: theme.palette.activeLink.main, color: "white" },
       }}
     >
-      <CardHeader title={product.name} />
+      <Typography variant="h5">{product.name}</Typography>
+
       <LazyLoadImagee
         alt={product.name}
-        height="120"
-        width="200"
+        height="100"
+        width="150"
         effect="blur"
-        src={product.Image}
+        src={product.image}
       />
-
-      <CardContent>
-        <Typography variant="h5">${product.Price}</Typography>
-      </CardContent>
+      <Typography variant="h6">${product.price}</Typography>
     </Card>
   );
 };

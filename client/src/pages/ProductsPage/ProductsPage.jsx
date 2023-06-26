@@ -6,14 +6,21 @@ import { Button } from "@mui/material";
 import AddProduct from "../../components/AddProduct/AddProduct";
 import Modal from "../../components/Modal/Modal";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { retriveProducts } from "../../redux/productSlice";
 const ProductsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
     setShowModal(false);
   };
+  const { products, isLoading, error } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
 
-  const { products } = data;
+  // const { products } = data;
+  useEffect(() => {
+    dispatch(retriveProducts());
+  }, [dispatch]);
   return (
     <>
       <div style={{ display: "flex", justifyContent: "end" }}>

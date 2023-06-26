@@ -1,29 +1,26 @@
 import React, { useContext } from "react";
 import Cardui from "../Cardui/Cardui";
 import { ContainerContext } from "../Containerr/Container";
+import CategoriesContainer from "../CategoriesContainer/CategoriesContainer";
+import { Box } from "@mui/material";
 const CardsContainer = ({ filterdProducts }) => {
-  const { targetProducts } = useContext(ContainerContext);
-  console.log("inside card containers");
-  console.log(targetProducts);
+  const { targetItems } = useContext(ContainerContext);
   const displayProducts = () => {
-    return targetProducts.map((p, index) => (
-      <Cardui key={p.id} product={p} index={index} />
+    return targetItems.map((p, index) => (
+      <Cardui key={p._id} product={p} index={index} />
     ));
   };
   return (
-    <div>
-      <h2>CardsContainer</h2>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-evenly",
-          gap: "50px",
-          flexWrap: "wrap",
-        }}
-      >
-        {displayProducts()}
-      </div>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-evenly",
+        gap: "50px",
+        flexWrap: "wrap",
+      }}
+    >
+      {displayProducts()}
+    </Box>
   );
 };
 

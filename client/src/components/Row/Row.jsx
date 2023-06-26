@@ -9,17 +9,17 @@ const Row = ({ type, item, index }) => {
         <>
           <td>{index + 1}</td>
           <td>{item.name}</td>
-          <td>{item.Code}</td>
-          <td>{item.Category}</td>
+          <td>{item.code}</td>
+          <td>{item.category.name}</td>
           <td>
             <LazyLoadImagee
-              src={item.Image}
+              src={item.image}
               alt={item.name}
               width={70}
               height={70}
             />
           </td>
-          <td>{item.Price}</td>
+          <td>{item.price}</td>
           <td>{item.unitOfMeasure}</td>
           <td style={{ color: "#9c27b0" }}>
             <EditIcon />

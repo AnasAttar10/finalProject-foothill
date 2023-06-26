@@ -26,7 +26,7 @@ import MyCart from "../MyCart/MyCart";
 const ResponsiveDrawer = (props) => {
   const { pathname } = useLocation();
   let drawerWidth = 240;
-  if (pathname === "/admin") drawerWidth = 350;
+  if (pathname === "/pos") drawerWidth = 350;
   console.log(pathname);
   const { window } = props;
   const { changeTheMode, modee } = props;
@@ -39,7 +39,7 @@ const ResponsiveDrawer = (props) => {
     <div>
       <ToolBar changeTheMode={changeTheMode} modee={modee} />
       <Divider />
-      {pathname === "/admin" ? <MyCart /> : <ListUi />}
+      {pathname === "/pos" ? <MyCart /> : <ListUi />}
     </div>
   );
 

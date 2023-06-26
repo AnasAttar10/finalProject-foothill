@@ -1,153 +1,188 @@
 import { Box, Button, Typography } from "@mui/material";
 import CartItem from "../CartItem/CartItem";
-import data from "../../data.json";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import AddCart from "../AddCart/AddCart";
-import Select from "../Select/Select";
-// import AddIcon from "@mui/icons-material/Add";
 import Field from "../Field/Field";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  InsertNewCart,
+  chooseCurrentCart,
+  decreseProductQuantity,
+  increseProductQuantity,
+  removeeProduct,
+  retriveCarts,
+} from "../../redux/cartSlice";
 
-const productsFromJson = data.cartItems[0].products;
-const { cartItems } = data;
-// console.log(cartItems);
 const MyCart = () => {
+  const { carts, products1, isLoading, error } = useSelector(
+    (state) => state.cart
+  );
+  const dispatch = useDispatch();
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
-  const [carts, setCarts] = useState(cartItems);
-  const [currentCart, setCurrentCart] = useState("");
-  const products = currentCart ? currentCart.products : [];
-  // const [products, setProducts] = useState(currentProducts);
-  // console.log("products");
-  // console.log(currentProducts);
   const formik = useFormik({
     initialValues: {
-      cartName: "",
+      cartId: "",
+      tax: 0,
+      discount: 0,
     },
     validationSchema: Yup.object({
-      cartName: Yup.string().required("Required"),
+      cartId: Yup.string().required("Required"),
+      tax: Yup.number()
+        .max(100, "should be less than 100 ")
+        .min(0, "should be more than or equal 0 "),
+      discount: Yup.number()
+        .max(100, "should be less than 100 ")
+        .min(0, "should be more than or equal 0 "),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       alert(JSON.stringify(values, null, 2));
+      resetForm();
     },
   });
-  const cartsName = cartItems.map((c) => c.name);
-  useEffect(() => {
-    const SelectedValue = formik.values.cartName;
-    const targetCart = carts.find((c) => c.name === SelectedValue);
-    setCurrentCart(targetCart);
-  }, [formik.values.cartName, carts]);
-
-  console.log(products);
-
+  const cartsName = carts && carts.map((c) => c.name);
+  const cartsId = carts && carts.map((c) => c._id);
+  const formikValue = formik.values.cartId;
+  const currentCart = carts.find((c) => c._id === formikValue);
+  const cartId = currentCart?._id;
+  // console.log(cartId);
+  const increseQuantity = (id, productQuantity) => {
+    productQuantity++;
+    dispatch(
+      increseProductQuantity({ cartId: cartId, productId: id, productQuantity })
+    );
+  };
+  const decreseQuantity = (id, productQuantity) => {
+    productQuantity--;
+    dispatch(
+      decreseProductQuantity({ cartId: cartId, productId: id, productQuantity })
+    );
+  };
   const addCart = (newCart) => {
-    const newCart1 = { name: newCart.value, products: [] };
-
-    setCarts([...carts, newCart1]);
+    const newCart1 = { name: newCart.cartName, products: [] };
+    dispatch(InsertNewCart(newCart1));
     newCart.value = "";
   };
   const removeProduct = (id) => {
-    const oldProducts = [...currentCart.products]
-    const newProducts = oldProducts.filter(p=>p.id !== id)
-    setCurrentCart({...currentCart , products:newProducts})
-    setCarts([...carts, currentCart.products.filter((p) => p.id !== id)]);
-    // setProducts([...products].filter((p) => p.id !== id));
+    console.log(id);
+    dispatch(removeeProduct({ cartId: cartId, productId: id }));
   };
-  const increseQuantity = (id) => {
-    // setProducts(
-    //   [...products].map((p) => {
-    //     if (p.id === id) {
-    //       return { ...p, quantity: p.quantity + 1 };
-    //     } else {
-    //       return p;
-    //     }
-    //   })
-    // );
-  };
-  const decreseQuantity = (id) => {
-    // setProducts(
-    //   [...products].map((p) => {
-    //     if (p.id === id) {
-    //       return { ...p, quantity: p.quantity - 1 };
-    //     } else {
-    //       return p;
-    //     }
-    //   })
-    // );
-  };
-  const totalPrice = products.reduce(
-    (sum, currentValue) => sum + currentValue.Price * currentValue.quantity,
+
+  useEffect(() => {
+    dispatch(retriveCarts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (cartId) dispatch(chooseCurrentCart(cartId));
+  }, [dispatch, cartId]);
+
+  const totalPrice = products1.reduce(
+    (sum, currentValue) =>
+      sum + currentValue.product.price * currentValue.quantity,
     0
   );
+  const handletaxChange = (event) => {
+    setTax(event.target.value);
+    formik.handleChange(event);
+  };
+  const handlediscoundChange = (event) => {
+    setDiscount(event.target.value);
+    formik.handleChange(event);
+  };
+  const handkeCartIdChange = (event) => {
+    formik.handleChange(event);
+  };
   const totalPriceAfterTax = (totalPrice * tax) / 100 + totalPrice;
   const totalPriceAfterDiscountAndTax =
     totalPriceAfterTax - (totalPriceAfterTax * discount) / 100;
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <>
       <AddCart addCart={addCart} />
-      <Select
-        name="cartName"
-        handleChange={formik.handleChange}
-        handleBlur={formik.handleBlur}
-        values={formik.values.cartName}
-        options={cartsName}
-      />
-      <ErrorMessage
-        isTouched={formik.touched.cartName}
-        errors={formik.errors.cartName}
-      />
-      <Box
-        component="nav"
-        sx={{
-          // width: { sm: drawerWidth },
-          flexShrink: { sm: 0 },
-          overflow: "auto",
-          height: "200px",
-        }}
-        aria-label="mailbox folders"
-      >
-        {products.map((p) => (
-          <CartItem
-            key={p.id}
-            product={p}
-            increseQuantity={increseQuantity}
-            decreseQuantity={decreseQuantity}
-            removeProduct={removeProduct}
+      <form onSubmit={formik.handleSubmit}>
+        <Box sx={{ width: "90%", margin: "auto" }}>
+          <select
+            id="cartId"
+            className="form-select form-select-lg mt-1 mb-3 w-90"
+            aria-label=".form-select-lg example"
+            name="cartId"
+            onChange={handkeCartIdChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.cartId}
+          >
+            <option defaultValue>Select your Cart </option>
+            {cartsName.map((v, i) => (
+              <option value={cartsId[i]} key={Math.random()}>
+                {v}
+              </option>
+            ))}
+          </select>
+          <ErrorMessage
+            isTouched={formik.touched.cartId}
+            errors={formik.errors.cartId}
           />
-        ))}
-      </Box>
-      <Typography variant="h6" sx={{ m: 1 }}>
-        Tax(%)
-        <input
-          style={{ width: "50%" }}
-          name="tax"
-          type="number"
-          value={tax}
-          onChange={(e) => setTax(e.target.value)}
-        />
-      </Typography>
-      <Typography variant="h6" sx={{ m: 1 }}>
-        Discount (%){" "}
-        <input
-          type="number"
-          style={{ width: "50%" }}
-          name="discount"
-          value={discount}
-          onChange={(e) => setDiscount(e.target.value)}
-        />
-      </Typography>
-      <Typography variant="h6" sx={{ m: 1 }}>
-        Total : ${totalPriceAfterDiscountAndTax}||0
-      </Typography>
-      <Button variant="contained" sx={{ mx: 1 }} type="submit">
-        checkout
-      </Button>
-      <Button variant="outlined" sx={{ mx: 1 }}>
-        cancel
-      </Button>
-    </form>
+        </Box>
+
+        <Box
+          component="div"
+          sx={{
+            flexShrink: { sm: 0 },
+            overflow: "auto",
+            height: "220px",
+            margin: "5px",
+          }}
+          aria-label="mailbox folders"
+        >
+          {cartId &&
+            products1.map((p) => (
+              <CartItem
+                key={p._id}
+                product={p}
+                removeProduct={removeProduct}
+                increseQuantity={increseQuantity}
+                decreseQuantity={decreseQuantity}
+              />
+            ))}
+        </Box>
+
+        <div>
+          <Field
+            name="tax"
+            onChange={handletaxChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.tax}
+          />
+          <ErrorMessage
+            isTouched={formik.touched.tax}
+            errors={formik.errors.tax}
+          />
+        </div>
+        <div>
+          <Field
+            name="discount"
+            onChange={handlediscoundChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.discount}
+          />
+          <ErrorMessage
+            isTouched={formik.touched.discount}
+            errors={formik.errors.discount}
+          />
+        </div>
+
+        <Typography variant="h6" sx={{ m: 1 }}>
+          Total : ${totalPriceAfterDiscountAndTax}
+        </Typography>
+        <Button variant="contained" sx={{ mx: 1 }} type="submit">
+          checkout
+        </Button>
+        <Button variant="outlined" sx={{ mx: 1 }}>
+          cancel
+        </Button>
+      </form>
+    </>
   );
 };
 
