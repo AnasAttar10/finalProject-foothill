@@ -11,11 +11,10 @@
 }
 .overlay{
     z-index:1800;
-    position:absolute;
-    height: 550px;
+    position:fixed;
     overflow: auto;
     width:70%;
-    margin: auto;
+    /* margin: auto; */
     top:50%;
     left:50%;
     transform: translate(-50% , -50%);

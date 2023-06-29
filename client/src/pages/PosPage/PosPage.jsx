@@ -19,7 +19,6 @@ const PosPage = () => {
   const ProductsBySearchCategory = targetCategory
     ? products.filter((p) => p.category._id === targetCategory)
     : "";
-  console.log(ProductsBySearchCategory);
   useEffect(() => {
     dispatch(retriveProducts());
   }, [dispatch]);
@@ -28,21 +27,40 @@ const PosPage = () => {
   }, [dispatch]);
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <h2>select category :</h2>
-        <IconButton onClick={() => setTargetCategory("")}>
-          <CachedIcon />
-        </IconButton>
-      </Box>
+      <Box sx={{ boxShadow: 3, p: 1, m: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <h2>select category :</h2>
+          <IconButton onClick={() => setTargetCategory("")}>
+            <CachedIcon />
+          </IconButton>
+        </Box>
 
-      <Swiperr items={categories} selectTargetCategory={selectTargetCategory} />
-      <Container
-        items={targetCategory ? ProductsBySearchCategory : products}
-        pagesizeProp={8}
-      >
-        <Filter />
-        <CardsContainer />
-      </Container>
+        <Swiperr
+          items={categories}
+          selectTargetCategory={selectTargetCategory}
+        />
+      </Box>
+      <Box sx={{ m: 1, p: 1, boxShadow: 3 }}>
+        <Container
+          items={targetCategory ? ProductsBySearchCategory : products}
+          pagesizeProp={8}
+        >
+          <Box
+            sx={{
+              m: 1,
+              p: 1,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              boxShadow: 3,
+            }}
+          >
+            <h2>List of Products</h2>
+            <Filter />
+          </Box>
+          <CardsContainer />
+        </Container>
+      </Box>
     </>
   );
 };

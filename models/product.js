@@ -5,8 +5,8 @@ const productSchema = new Schema({
   code: { type: String, required: true },
   price: { type: Number, required: true, min: 1 },
   category: { type: mongoose.Types.ObjectId, ref: "Category" },
+  unitOfMeasure: { type: mongoose.Types.ObjectId, ref: "Unit" },
   image: { type: String, required: true },
-  // unitOfMeasure: { type: mongoose.Types.ObjectId, ref: "Unit" },
 });
 
 module.exports = mongoose.model("Product", productSchema);

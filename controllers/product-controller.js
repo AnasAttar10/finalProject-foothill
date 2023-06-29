@@ -9,8 +9,8 @@ const {
 } = require("../services/product-services");
 
 router.get("/", getProducts);
-router.get("/:id", getProduct);
 router.post("/", newProduct);
+router.get("/:id", getProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 

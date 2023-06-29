@@ -3,10 +3,9 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import Style from "./Modal.module.css";
 import { useTheme } from "@emotion/react";
-const Modal = ({ children, showModal, closeModal }) => {
+const Modal = ({ children, showModal, closeModal, setItemToUpdate }) => {
   const theme = useTheme();
   if (!showModal) return null;
-  console.log("this log from Table");
 
   return (
     <>

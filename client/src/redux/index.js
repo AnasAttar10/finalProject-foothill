@@ -4,6 +4,7 @@ import bookReducer from "./bookSlice";
 import authReducer from "./authSlice";
 import categoryReducer from "./categorySlice";
 import productReducer from "./productSlice";
+import unitReducer from "./unitSlice";
 export default configureStore({
   reducer: {
     book: bookReducer,
@@ -11,5 +12,6 @@ export default configureStore({
     cart: cartReducer,
     product: productReducer,
     category: categoryReducer,
+    unit: unitReducer,
   },
 });

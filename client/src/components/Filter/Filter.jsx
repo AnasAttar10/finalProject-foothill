@@ -7,9 +7,7 @@ const Filter = () => {
   return (
     <Box
       sx={{
-        m: 2,
-        width: "100%",
-        mx: "auto",
+        width: "40%",
         border: "none",
       }}
       component="form"
@@ -21,6 +19,7 @@ const Filter = () => {
           variant="outlined"
           value={filterdValue}
           onChange={handleFilter}
+          placeholder="Search ..."
         ></TextField>
       </FormControl>
     </Box>

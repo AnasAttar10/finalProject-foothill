@@ -1,33 +1,37 @@
-import { Button, FormControl, InputLabel, OutlinedInput } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import SaveIcon from "@mui/icons-material/Save";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import Field from "../Field/Field";
-import { insertNewCategory, retriveCategory } from "../../redux/categorySlice";
-import { updateCategory } from "../../redux/categorySlice";
-const AddCategories = ({ isUpdateForm, itemToUpdate, dispatch }) => {
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import { Button } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import { insertNewUnit, updateUnit } from "../../redux/unitSlice";
+const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch }) => {
   const formik = useFormik({
     initialValues: {
       name: itemToUpdate && isUpdateForm ? itemToUpdate.name : "",
-      image: itemToUpdate && isUpdateForm ? itemToUpdate.image : "",
+      baseUnit: itemToUpdate && isUpdateForm ? itemToUpdate.baseUnit : "",
+      conversionFactor:
+        itemToUpdate && isUpdateForm ? itemToUpdate.conversionFactor : "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
         .max(15, "Must be 15 characters or less")
         .required("Required"),
-      image: Yup.string()
-        .max(200, "Must be 200 characters or less")
+      baseUnit: Yup.string()
+        .max(15, "Must be 15 characters or less")
+        .required("Required"),
+      conversionFactor: Yup.number()
+        .min(1, "Must be 1 or more")
         .required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
       alert(JSON.stringify(values, null, 2));
       if (isUpdateForm) {
         const id = itemToUpdate._id;
-        dispatch(updateCategory({ id, newCategory: values }));
+        dispatch(updateUnit({ id, newUnit: values }));
       } else {
-        dispatch(insertNewCategory(values));
+        dispatch(insertNewUnit(values));
       }
       resetForm();
     },
@@ -35,7 +39,7 @@ const AddCategories = ({ isUpdateForm, itemToUpdate, dispatch }) => {
   return (
     <form onSubmit={formik.handleSubmit} style={{ padding: "10px" }}>
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-        {isUpdateForm ? "Update " : "Add "} category
+        {isUpdateForm ? "Update " : "Add "}unit
       </h2>
       <div>
         <Field
@@ -51,14 +55,27 @@ const AddCategories = ({ isUpdateForm, itemToUpdate, dispatch }) => {
       </div>
       <div>
         <Field
-          name="image"
+          name="baseUnit"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.image}
+          value={formik.values.baseUnit}
         />
         <ErrorMessage
-          isTouched={formik.touched.image}
-          errors={formik.errors.image}
+          isTouched={formik.touched.baseUnit}
+          errors={formik.errors.baseUnit}
+        />
+      </div>
+      <div>
+        <Field
+          name="conversionFactor"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.conversionFactor}
+          type="text"
+        />
+        <ErrorMessage
+          isTouched={formik.touched.conversionFactor}
+          errors={formik.errors.conversionFactor}
         />
       </div>
       <Button
@@ -73,4 +90,4 @@ const AddCategories = ({ isUpdateForm, itemToUpdate, dispatch }) => {
   );
 };
 
-export default AddCategories;
+export default AddUnit;

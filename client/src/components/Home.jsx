@@ -67,6 +67,7 @@ const Home = () => {
         </Form>
       </Formik>
       123
+      <MyCart />
     </>
   );
 };

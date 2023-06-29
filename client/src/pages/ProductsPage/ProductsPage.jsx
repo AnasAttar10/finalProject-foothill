@@ -9,39 +9,61 @@ import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { retriveProducts } from "../../redux/productSlice";
-const ProductsPage = () => {
-  const [showModal, setShowModal] = useState(false);
-  const closeModal = () => {
-    setShowModal(false);
-  };
-  const { products, isLoading, error } = useSelector((state) => state.product);
+import withGuard from "../../utils/withGuard";
+const ProductsPage = ({
+  isUpdateForm,
+  setIsUpdateForm,
+  updatedItemId,
+  setUpdatedItemId,
+  showModal,
+  setShowModal,
+  closeModal,
+}) => {
+  const { products, targetProduct, isLoading, error } = useSelector(
+    (state) => state.product
+  );
   const dispatch = useDispatch();
-
-  // const { products } = data;
   useEffect(() => {
     dispatch(retriveProducts());
-  }, [dispatch]);
+  }, [dispatch, products.length]);
   return (
     <>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"
           endIcon={<AddIcon />}
-          onClick={() => setShowModal(true)}
+          onClick={async () => {
+            await setUpdatedItemId("");
+            await setIsUpdateForm(false);
+            await setShowModal(true);
+          }}
           sx={{ marginRight: 2 }}
         >
           Add Product
         </Button>
       </div>
       <Modal showModal={showModal} closeModal={closeModal}>
-        <AddProduct />
+        <AddProduct
+          isUpdateForm={isUpdateForm}
+          dispatch={dispatch}
+          itemToUpdate={targetProduct}
+          setShowModal={setShowModal}
+        />
       </Modal>
-      <Container items={products} type="products">
+      <Container
+        items={products ? products : []}
+        pagesizeProp={8}
+        type="products"
+      >
         <Filter />
-        <Table />
+        <Table
+          setShowModal={setShowModal}
+          setIsUpdateForm={setIsUpdateForm}
+          dispatch={dispatch}
+        />
       </Container>
     </>
   );
 };
 
-export default ProductsPage;
+export default withGuard(ProductsPage);

@@ -14,6 +14,19 @@ export const retriveCarts = createAsyncThunk(
     }
   }
 );
+export const retriveCart = createAsyncThunk(
+  "cart/retriveCart",
+  async (cartId, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+      const res = await fetch(`${EXTERNAL_API}/${cartId}`);
+      const result = await res.json();
+      return result.cart[0].products;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 export const InsertNewCart = createAsyncThunk(
   "cart/insertCart",
   async (newCart, thunkAPI) => {
@@ -30,7 +43,48 @@ export const InsertNewCart = createAsyncThunk(
       const success = await res.json();
       console.log(success);
       return success;
-      console.log(newCart);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const insertProductToCart = createAsyncThunk(
+  "cart/insertProductToCart",
+  async ({ cartId, productId }, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const newProduct = getState().product.products.find(
+      (p) => p._id === productId
+    );
+    try {
+      const res = await fetch(
+        `${EXTERNAL_API}/${cartId}/product/${productId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await res.json();
+      return data;
+      // return newProduct;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+export const removeeProduct = createAsyncThunk(
+  "cart/deleteproductfromcart",
+  // async ({ cartId, id }, thunkAPI) => {
+  async ({ cartId, productId }, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+      const res = await fetch(
+        `${EXTERNAL_API}/${cartId}/removeproduct/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      return productId;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -78,74 +132,66 @@ export const decreseProductQuantity = createAsyncThunk(
   }
 );
 
-export const removeeProduct = createAsyncThunk(
-  "cart/deleteproductfromcart",
-  // async ({ cartId, id }, thunkAPI) => {
-  async ({ cartId, productId }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
-    try {
-      const res = await fetch(
-        `${EXTERNAL_API}/${cartId}/removeproduct/${productId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      return productId;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-export const chooseCurrentCart = createAsyncThunk(
-  "cart/chooseCurrentCart",
-  async (cartId, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
-    try {
-      const res = await fetch(`${EXTERNAL_API}/${cartId}`);
-      const result = await res.json();
-      return result[0].products;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-export const insertProductToCart = createAsyncThunk(
-  "cart/insertProductToCart",
-  async ({ cartId, productId, product }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
-    try {
-      const res = await fetch(
-        `${EXTERNAL_API}/${cartId}/product/${productId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ product }),
-        }
-      );
-      return productId;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
     carts: [],
-    currentCart: "",
+    // currentCart: "",
     products1: [],
     isLoading: false,
     error: null,
   },
   extraReducers: {
+    //Get carts List
+    [retriveCarts.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [retriveCarts.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.carts = action.payload.carts;
+    },
+    [retriveCarts.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    //choose current cart and change the target products
+    [retriveCart.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [retriveCart.fulfilled]: (state, action) => {
+      state.products1 = action.payload;
+      console.log(action);
+      state.currentCart = action.meta.arg;
+      state.isLoading = false;
+    },
+    [retriveCart.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    //Insert New cart
+    [InsertNewCart.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [InsertNewCart.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.carts.push(action.payload.newCart);
+    },
+    [InsertNewCart.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
     //insertProductToCart
     [insertProductToCart.pending]: (state, action) => {
       state.isLoading = true;
     },
     [insertProductToCart.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.products1 = state.products1.filter((p) => p._id !== action.payload);
+      console.log(action);
+      // const targetProduct = state.products1.find(
+      //   (p) => p._id === action.payload
+      // );
+      // state.products1.push({ product: action.payload, quantity: 1 });
+      state.products1 = action.payload.insertedProduct.products;
     },
     [insertProductToCart.rejected]: (state, action) => {
       state.isLoading = false;
@@ -160,44 +206,6 @@ const cartSlice = createSlice({
       state.products1 = state.products1.filter((p) => p._id !== action.payload);
     },
     [removeeProduct.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-
-    //choose current cart and change the target products
-    [chooseCurrentCart.pending]: (state, action) => {
-      state.isLoading = true;
-    },
-    [chooseCurrentCart.fulfilled]: (state, action) => {
-      state.products1 = action.payload;
-      state.isLoading = false;
-    },
-    [chooseCurrentCart.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-
-    //Get carts List
-    [retriveCarts.pending]: (state, action) => {
-      state.isLoading = true;
-    },
-    [retriveCarts.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.carts = action.payload;
-    },
-    [retriveCarts.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    //Insert New Book
-    [InsertNewCart.pending]: (state, action) => {
-      state.isLoading = true;
-    },
-    [InsertNewCart.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.carts.push(action.payload);
-    },
-    [InsertNewCart.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },

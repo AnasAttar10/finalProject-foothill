@@ -15,13 +15,13 @@ const ListUi = () => {
   const { pathname } = useLocation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const pages = ["Home", "Products", "Categories", "Settings", "Logout"];
-  const paths = ["/", "/products", "/categories", "/settings", "/logout"];
+  const pages = ["Home", "Products", "Categories", "Units", "Logout"];
+  const paths = ["/", "/products", "/categories", "/units", "/logout"];
   const Icons = [
     <Home sx={{ color: pathname === "/" ? "white" : "" }} />,
     <Create sx={{ color: pathname === paths[1] ? "white" : "" }} />,
     <Create sx={{ color: pathname === paths[2] ? "white" : "" }} />,
-    <Settings sx={{ color: pathname === paths[3] ? "white" : "" }} />,
+    <Create sx={{ color: pathname === paths[3] ? "white" : "" }} />,
     <Logout sx={{ color: pathname === paths[4] ? "white" : "" }} />,
   ];
   return (

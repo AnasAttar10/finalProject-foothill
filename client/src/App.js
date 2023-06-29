@@ -12,6 +12,7 @@ import ProductsPage from "./pages/ProductsPage/ProductsPage";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import MyCart from "./components/MyCart/MyCart";
 import PosPage from "./pages/PosPage/PosPage";
+import UnitsPage from "./pages/UnitsPage/UnitsPage";
 const App = () => {
   const [modee, setModee] = useState("light");
   const darkTheme = createTheme({
@@ -54,6 +55,7 @@ const App = () => {
             <Route index element={<Home />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="categories" element={<CategoriesPage />} />
+            <Route path="units" element={<UnitsPage />} />
             <Route path="pos" element={<PosPage />} />
           </Route>
           {/* <Route

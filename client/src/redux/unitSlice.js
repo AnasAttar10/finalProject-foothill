@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { logedInOut } from "./authSlice";
-const EXTERNAL_API = `http://localhost:8000/category`;
-export const retriveCategories = createAsyncThunk(
-  "category/getCategoriess",
+const EXTERNAL_API = `http://localhost:8000/unit`;
+export const retriveUnits = createAsyncThunk(
+  "unit/getUnits",
   async (_, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
@@ -14,8 +14,8 @@ export const retriveCategories = createAsyncThunk(
     }
   }
 );
-export const retriveCategory = createAsyncThunk(
-  "category/retriveCategory",
+export const retriveUnit = createAsyncThunk(
+  "unit/getUnit",
   async (id, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
@@ -27,9 +27,9 @@ export const retriveCategory = createAsyncThunk(
     }
   }
 );
-export const insertNewCategory = createAsyncThunk(
-  "category/insertCategory",
-  async (newCategory, thunkAPI) => {
+export const insertNewUnit = createAsyncThunk(
+  "unit/insertUnit",
+  async (newUnit, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
     // newBook.userName = getState().auth.userName;
     try {
@@ -38,7 +38,7 @@ export const insertNewCategory = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify(newUnit),
       });
       const success = await res.json();
       return success;
@@ -47,9 +47,9 @@ export const insertNewCategory = createAsyncThunk(
     }
   }
 );
-export const updateCategory = createAsyncThunk(
-  "category/udateCategory",
-  async ({ id, newCategory }, thunkAPI) => {
+export const updateUnit = createAsyncThunk(
+  "unit/updateUnit",
+  async ({ id, newUnit }, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
     // newBook.userName = getState().auth.userName;
     try {
@@ -58,7 +58,7 @@ export const updateCategory = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify(newUnit),
       });
       const success = await res.json();
       return success;
@@ -67,8 +67,8 @@ export const updateCategory = createAsyncThunk(
     }
   }
 );
-export const removeCategory = createAsyncThunk(
-  "category/deleteCategory",
+export const removeUnit = createAsyncThunk(
+  "unit/deleteUnit",
   async (id, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
     try {
@@ -82,83 +82,72 @@ export const removeCategory = createAsyncThunk(
   }
 );
 
-const categorySlice = createSlice({
-  name: "category",
-  initialState: {
-    categories: [],
-    targetCategory: "",
-    isLoading: false,
-    error: null,
-  },
+const unitSlice = createSlice({
+  name: "unit",
+  initialState: { units: [], targetUnit: "", isLoading: false, error: null },
   extraReducers: {
-    //Get Categories List
-    [retriveCategories.pending]: (state, action) => {
+    //Get unit List
+    [retriveUnits.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [retriveCategories.fulfilled]: (state, action) => {
+    [retriveUnits.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.categories = action.payload.categories;
+      state.units = action.payload.units;
     },
-    [retriveCategories.rejected]: (state, action) => {
+    [retriveUnits.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    // getCategory
-    [retriveCategory.pending]: (state, action) => {
+    //get unit
+    [retriveUnit.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [retriveCategory.fulfilled]: (state, action) => {
+    [retriveUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.targetCategory = action.payload.category;
+      state.targetUnit = action.payload.unit;
     },
-    [retriveCategory.rejected]: (state, action) => {
+    [retriveUnit.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    // Insert New Category
-    [insertNewCategory.pending]: (state, action) => {
+    // Insert New Unit
+    [insertNewUnit.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [insertNewCategory.fulfilled]: (state, action) => {
+    [insertNewUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.categories.push(action.payload.newCategory);
+      state.units.push(action.payload.newUnit);
     },
-    [insertNewCategory.rejected]: (state, action) => {
+    [insertNewUnit.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    // update Category
-    [updateCategory.pending]: (state, action) => {
+    //updateUnit
+    [updateUnit.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [updateCategory.fulfilled]: (state, action) => {
+    [updateUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
       const { id } = action.meta.arg;
-      const targetIndex = state.categories.findIndex((c) => c._id === id);
-      state.categories[targetIndex] = action.payload.updatedCategory;
+      const targetIndex = state.units.findIndex((c) => c._id === id);
+      state.units[targetIndex] = action.payload.updatedUnit;
     },
-    [updateCategory.rejected]: (state, action) => {
+    [updateUnit.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
-    //Delete Category
-    [removeCategory.pending]: (state, action) => {
+    //delete unit
+    [removeUnit.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [removeCategory.fulfilled]: (state, action) => {
+    [removeUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.categories = state.categories.filter(
-        (category) => category._id !== action.payload
-      );
+      state.units = state.units.filter((unit) => unit._id !== action.payload);
     },
-    [removeCategory.rejected]: (state, action) => {
+    [removeUnit.rejected]: (state, action) => {
       state.isLoading = false;
     },
-    // loged IN / Out
-    // [logedInOut]: (state, action) => {
-    //   console.log(action);
-    // },
   },
 });
 
-export default categorySlice.reducer;
+export default unitSlice.reducer;

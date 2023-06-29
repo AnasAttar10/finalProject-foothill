@@ -1,7 +1,14 @@
 import { FormControl } from "@mui/material";
 import React from "react";
 
-const Select = ({ name, handleChange, handleBlur, values, options }) => {
+const Select = ({
+  name,
+  handleChange,
+  handleBlur,
+  values,
+  options,
+  optionValues,
+}) => {
   return (
     <FormControl position="start" fullWidth variant="outlined" sx={{ p: 1 }}>
       <label htmlFor={name}>{name}</label>
@@ -15,8 +22,8 @@ const Select = ({ name, handleChange, handleBlur, values, options }) => {
         value={values}
       >
         <option defaultValue>Select The Value </option>
-        {options.map((v) => (
-          <option value={v} key={Math.random()}>
+        {options.map((v, i) => (
+          <option value={optionValues[i]} key={optionValues[i]}>
             {v}
           </option>
         ))}

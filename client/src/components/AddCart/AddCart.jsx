@@ -24,21 +24,15 @@ const AddCart = ({ addCart }) => {
     },
   });
   return (
-    <>
-      <form
-        onSubmit={formik.handleSubmit}
-        style={{ display: "flex", justifyContent: "space-evenly" }}
-      >
+    <form onSubmit={formik.handleSubmit}>
+      <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
         <Field
           name="cartName"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.cartName}
         />
-        <ErrorMessage
-          isTouched={formik.touched.cartName}
-          errors={formik.errors.cartName}
-        />
+
         <Button
           variant="contained"
           endIcon={<AddIcon />}
@@ -47,8 +41,13 @@ const AddCart = ({ addCart }) => {
         >
           Add
         </Button>
-      </form>
-    </>
+      </Box>
+
+      <ErrorMessage
+        isTouched={formik.touched.cartName}
+        errors={formik.errors.cartName}
+      />
+    </form>
   );
 };
 

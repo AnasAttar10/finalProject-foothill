@@ -6,7 +6,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const productContoller = require("./controllers/product-controller");
 const categoryController = require("./controllers/category-controller");
-// const unitContoller = require("./controllers/unit-controller");
+const unitContoller = require("./controllers/unit-controller");
 const cartController = require("./controllers/cart-controller");
 
 require("colors");
@@ -39,12 +39,9 @@ app.use(morgan("dev"));
 const mongoose = require("mongoose");
 const connectDB = require("./config/config");
 connectDB();
-// app.get("/name", (req, res) => {
-//   res.send({ messgae: "He everyone" });
-// });
 app.use("/product", productContoller);
 app.use("/category", categoryController);
-// app.use("/unit", unitContoller);
+app.use("/unit", unitContoller);
 app.use("/cart", cartController);
 
 const port = process.env.PORT || 8000;

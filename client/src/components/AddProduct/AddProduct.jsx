@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@mui/material";
@@ -6,103 +6,127 @@ import Field from "../Field/Field";
 import Select from "../Select/Select";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import SaveIcon from "@mui/icons-material/Save";
+import { insertNewProduct, updateProduct } from "../../redux/productSlice";
+import { retriveCategories } from "../../redux/categorySlice";
+import { useSelector } from "react-redux";
+import { retriveUnits } from "../../redux/unitSlice";
 
-const AddProduct = () => {
+const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
+  const { categories } = useSelector((state) => state.category);
+  const { units } = useSelector((state) => state.unit);
+  const categoryNames = categories.map((c) => c.name);
+  const categoryIds = categories.map((c) => c._id);
+  const unitNames = units.map((c) => c.name);
+  const unitIds = units.map((u) => u._id);
   const formik = useFormik({
     initialValues: {
-      productName: "",
-      productCode: "",
-      productPrice: "",
-      productCategory: "",
-      productImage: "",
-      unitOfMeasure: "",
+      name: itemToUpdate && isUpdateForm ? itemToUpdate.name : "",
+      code: itemToUpdate && isUpdateForm ? itemToUpdate.code : "",
+      price: itemToUpdate && isUpdateForm ? itemToUpdate.price : "",
+      category: itemToUpdate && isUpdateForm ? itemToUpdate.category._id : "",
+      image: itemToUpdate && isUpdateForm ? itemToUpdate.image : "",
+      unitOfMeasure:
+        itemToUpdate && isUpdateForm ? itemToUpdate.unitOfMeasure._id : "",
     },
     validationSchema: Yup.object({
-      productName: Yup.string()
+      name: Yup.string()
         .max(15, "Must be 15 characters or less")
         .required("Required"),
-      productCode: Yup.string()
+      code: Yup.string()
         .max(15, "Must be 15 characters or less")
         .required("Required"),
-      productCategory: Yup.string()
+      category: Yup.string()
         // .max(15, "Must be 15 characters or less")
         .required("Required"),
       unitOfMeasure: Yup.string()
         // .max(20, "Must be 20 characters or less")
         .required("Required"),
-      productPrice: Yup.number().required("Required"),
-      productImage: Yup.string()
+      price: Yup.number().required("Required"),
+      image: Yup.string()
         .max(100, "Must be 20 characters or less")
         .required("Required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       alert(JSON.stringify(values, null, 2));
+      if (isUpdateForm) {
+        const id = itemToUpdate._id;
+        dispatch(updateProduct({ id, updatedProduct: values }));
+      } else {
+        dispatch(insertNewProduct(values));
+      }
+      resetForm();
+      setShowModal(false);
     },
   });
-  const categories = ["fruits", "vegetable", "chicken", "meat"];
-  const unitsOfMeasure = ["fruits", "vegetable", "chicken", "meat"];
+  useEffect(() => {
+    dispatch(retriveCategories());
+    dispatch(retriveUnits());
+  }, [dispatch]);
   return (
     <form onSubmit={formik.handleSubmit} style={{ padding: "10px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Add Product</h2>
+      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+        {isUpdateForm ? "Update " : "Add "} product
+      </h2>
       <div>
         <Field
-          name="productName"
+          name="name"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.productName}
+          value={formik.values.name}
         />
         <ErrorMessage
-          isTouched={formik.touched.productName}
-          errors={formik.errors.productName}
+          isTouched={formik.touched.name}
+          errors={formik.errors.name}
         />
       </div>
       <div>
         <Field
-          name="productCode"
+          name="code"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.productCode}
+          value={formik.values.code}
         />
         <ErrorMessage
-          isTouched={formik.touched.productCode}
-          errors={formik.errors.productCode}
+          isTouched={formik.touched.code}
+          errors={formik.errors.code}
         />
       </div>
       <div>
         <Field
-          name="productPrice"
+          name="price"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.productPrice}
+          value={formik.values.price}
         />
         <ErrorMessage
-          isTouched={formik.touched.productPrice}
-          errors={formik.errors.productPrice}
+          isTouched={formik.touched.price}
+          errors={formik.errors.price}
         />
       </div>
       <div>
         <Field
-          name="productImage"
+          name="image"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.productImage}
+          value={formik.values.image}
         />
         <ErrorMessage
-          isTouched={formik.touched.productImage}
-          errors={formik.errors.productImage}
+          isTouched={formik.touched.image}
+          errors={formik.errors.image}
         />
       </div>
       <div>
         <Select
-          name="productCategory"
+          name="category"
           handleChange={formik.handleChange}
           handleBlur={formik.handleBlur}
-          values={formik.values.productCategory}
-          options={categories}
+          values={formik.values.category}
+          options={categoryNames}
+          optionValues={categoryIds}
         />
         <ErrorMessage
-          isTouched={formik.touched.productCategory}
-          errors={formik.errors.productCategory}
+          isTouched={formik.touched.category}
+          errors={formik.errors.category}
         />
       </div>
 
@@ -112,7 +136,8 @@ const AddProduct = () => {
           handleChange={formik.handleChange}
           handleBlur={formik.handleBlur}
           values={formik.values.unitOfMeasure}
-          options={unitsOfMeasure}
+          options={unitNames}
+          optionValues={unitIds}
         />
         <ErrorMessage
           isTouched={formik.touched.unitOfMeasure}
@@ -125,7 +150,7 @@ const AddProduct = () => {
         sx={{ m: 1 }}
         endIcon={<SaveIcon />}
       >
-        Send
+        save
       </Button>
     </form>
   );
