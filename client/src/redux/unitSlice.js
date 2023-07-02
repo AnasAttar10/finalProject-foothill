@@ -1,14 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { logedInOut } from "./authSlice";
 const EXTERNAL_API = `http://localhost:8000/unit`;
+// const token = JSON.parse(localStorage.getItem("token"));
+
 export const retriveUnits = createAsyncThunk(
   "unit/getUnits",
   async (_, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(EXTERNAL_API);
+      const res = await fetch(EXTERNAL_API, {
+        Accept: "application/json",
+        headers,
+        "Content-Type": "multipart/form-data",
+        mode: "cors",
+      });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -17,11 +30,20 @@ export const retriveUnits = createAsyncThunk(
 export const retriveUnit = createAsyncThunk(
   "unit/getUnit",
   async (id, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
+
     try {
-      const res = await fetch(`${EXTERNAL_API}/${id}`);
+      const res = await fetch(`${EXTERNAL_API}/${id}`, {
+        headers,
+      });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -31,17 +53,22 @@ export const insertNewUnit = createAsyncThunk(
   "unit/insertUnit",
   async (newUnit, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
     try {
       const res = await fetch(EXTERNAL_API, {
         method: "POST",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newUnit),
       });
-      const success = await res.json();
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -51,17 +78,22 @@ export const updateUnit = createAsyncThunk(
   "unit/updateUnit",
   async ({ id, newUnit }, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
     try {
       const res = await fetch(`${EXTERNAL_API}/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newUnit),
       });
-      const success = await res.json();
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -71,11 +103,19 @@ export const removeUnit = createAsyncThunk(
   "unit/deleteUnit",
   async (id, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(`${EXTERNAL_API}/${id}`, {
         method: "DELETE",
+        headers,
       });
-      return id;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return id;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -84,7 +124,7 @@ export const removeUnit = createAsyncThunk(
 
 const unitSlice = createSlice({
   name: "unit",
-  initialState: { units: [], targetUnit: "", isLoading: false, error: null },
+  initialState: { units: [], targetUnit: "", isLoading: false, error: "" },
   extraReducers: {
     //Get unit List
     [retriveUnits.pending]: (state, action) => {
@@ -96,7 +136,7 @@ const unitSlice = createSlice({
     },
     [retriveUnits.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //get unit
     [retriveUnit.pending]: (state, action) => {
@@ -108,7 +148,7 @@ const unitSlice = createSlice({
     },
     [retriveUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // Insert New Unit
     [insertNewUnit.pending]: (state, action) => {
@@ -120,7 +160,7 @@ const unitSlice = createSlice({
     },
     [insertNewUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //updateUnit
     [updateUnit.pending]: (state, action) => {
@@ -134,7 +174,7 @@ const unitSlice = createSlice({
     },
     [updateUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //delete unit
     [removeUnit.pending]: (state, action) => {
@@ -146,6 +186,7 @@ const unitSlice = createSlice({
     },
     [removeUnit.rejected]: (state, action) => {
       state.isLoading = false;
+      state.error = action.payload.error;
     },
   },
 });

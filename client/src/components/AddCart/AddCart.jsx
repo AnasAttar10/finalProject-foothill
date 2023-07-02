@@ -18,6 +18,7 @@ const AddCart = ({ addCart }) => {
     }),
     onSubmit: (values, { resetForm }) => {
       alert(JSON.stringify(values, null, 2));
+      console.log(values);
       addCart(values);
 
       resetForm();
@@ -36,7 +37,7 @@ const AddCart = ({ addCart }) => {
         <Button
           variant="contained"
           endIcon={<AddIcon />}
-          sx={{ height: "40px", m: "8px" }}
+          sx={{ m: "8px" }}
           type="submit"
         >
           Add

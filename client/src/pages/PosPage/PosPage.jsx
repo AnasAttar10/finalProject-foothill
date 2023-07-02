@@ -8,23 +8,25 @@ import { Box, IconButton } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { retriveProducts } from "../../redux/productSlice";
 import { retriveCategories } from "../../redux/categorySlice";
+// import { getUserInformation } from "../../redux/authSlice";
 const PosPage = () => {
   const { products } = useSelector((state) => state.product);
   const { categories } = useSelector((state) => state.category);
+  const { userId, isLogedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [targetCategory, setTargetCategory] = useState("");
   const selectTargetCategory = (id) => {
     setTargetCategory(id);
   };
   const ProductsBySearchCategory = targetCategory
-    ? products.filter((p) => p.category._id === targetCategory)
+    ? products?.filter((p) => p.category._id === targetCategory)
     : "";
   useEffect(() => {
     dispatch(retriveProducts());
-  }, [dispatch]);
+  }, [dispatch, userId]);
   useEffect(() => {
     dispatch(retriveCategories());
-  }, [dispatch]);
+  }, [dispatch, userId]);
   return (
     <>
       <Box sx={{ boxShadow: 3, p: 1, m: 1 }}>

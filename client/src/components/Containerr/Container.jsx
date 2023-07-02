@@ -24,14 +24,14 @@ const Container = ({ children, items, pagesizeProp, type }) => {
 
   const start = (page - 1) * pageSize;
   const end = page * pageSize;
-  const filterdItems = items.filter((it) =>
+  const filterdItems = items?.filter((it) =>
     it.name.trim().toLowerCase().includes(filterdValue)
   );
-  const targetItems = filterdItems.filter((p, index) => {
+  const targetItems = filterdItems?.filter((p, index) => {
     return index >= start && index < end;
   });
   const canIncreasePageNumbering =
-    Number.parseInt(filterdItems.length / pageSize) + 1 !== page;
+    Number.parseInt(filterdItems?.length / pageSize) + 1 !== page;
   const value = { targetItems, filterdValue, handleFilter, type };
   return (
     <ContainerContext.Provider value={value}>

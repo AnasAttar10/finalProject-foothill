@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { retriveProducts } from "../../redux/productSlice";
 import withGuard from "../../utils/withGuard";
+import ShowErrors from "../../components/ShowErrors/ShowErrors";
 const ProductsPage = ({
   isUpdateForm,
   setIsUpdateForm,
@@ -25,9 +26,10 @@ const ProductsPage = ({
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retriveProducts());
-  }, [dispatch, products.length]);
+  }, [dispatch, products?.length]);
   return (
     <>
+      <ShowErrors error={error} />
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"

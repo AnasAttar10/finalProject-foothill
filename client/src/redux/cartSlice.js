@@ -1,14 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { logedInOut } from "./authSlice";
 const EXTERNAL_API = `http://localhost:8000/cart`;
+// const token = JSON.parse(localStorage.getItem("token"));
+
 export const retriveCarts = createAsyncThunk(
   "cart/getCarts",
   async (_, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(EXTERNAL_API);
+      const res = await fetch(EXTERNAL_API, { headers });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -17,11 +25,17 @@ export const retriveCarts = createAsyncThunk(
 export const retriveCart = createAsyncThunk(
   "cart/retriveCart",
   async (cartId, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(`${EXTERNAL_API}/${cartId}`);
+      const res = await fetch(`${EXTERNAL_API}/${cartId}`, { headers });
       const result = await res.json();
-      return result.cart[0].products;
+      if (result.error) {
+        return rejectWithValue(result);
+      } else {
+        return result.cart[0].products;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -31,18 +45,23 @@ export const InsertNewCart = createAsyncThunk(
   "cart/insertCart",
   async (newCart, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
+
     try {
       const res = await fetch(EXTERNAL_API, {
         method: "POST",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newCart),
       });
       const success = await res.json();
-      console.log(success);
-      return success;
+      if (success.error) {
+        return rejectWithValue(success);
+      } else {
+        return success;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -53,6 +72,9 @@ export const insertProductToCart = createAsyncThunk(
   "cart/insertProductToCart",
   async ({ cartId, productId }, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+
+    const headers = { Authorization: `anas__${token}` };
     const newProduct = getState().product.products.find(
       (p) => p._id === productId
     );
@@ -61,12 +83,18 @@ export const insertProductToCart = createAsyncThunk(
         `${EXTERNAL_API}/${cartId}/product/${productId}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            Authorization: `anas__${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
       const data = await res.json();
-      return data;
-      // return newProduct;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -74,17 +102,26 @@ export const insertProductToCart = createAsyncThunk(
 );
 export const removeeProduct = createAsyncThunk(
   "cart/deleteproductfromcart",
-  // async ({ cartId, id }, thunkAPI) => {
   async ({ cartId, productId }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+
+    const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(
         `${EXTERNAL_API}/${cartId}/removeproduct/${productId}`,
         {
           method: "DELETE",
+          headers,
         }
       );
-      return productId;
+      const data = await res.json();
+      console.log(data);
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return productId;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -93,19 +130,28 @@ export const removeeProduct = createAsyncThunk(
 export const increseProductQuantity = createAsyncThunk(
   "cart/increseProductQuantity",
   async ({ cartId, productId, productQuantity }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+
+    const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(
         `${EXTERNAL_API}/${cartId}/productquantity/${productId}`,
         {
           method: "PUT",
           headers: {
+            Authorization: `anas__${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ newQuantity: productQuantity }),
         }
       );
-      return productId;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return productId;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -115,17 +161,28 @@ export const increseProductQuantity = createAsyncThunk(
 export const decreseProductQuantity = createAsyncThunk(
   "cart/decreseProductQuantity",
   async ({ cartId, productId, productQuantity }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+
+    const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(
         `${EXTERNAL_API}/${cartId}/productquantity/${productId}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            Authorization: `anas__${token}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ newQuantity: productQuantity }),
         }
       );
-      return productId;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return productId;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -136,10 +193,9 @@ const cartSlice = createSlice({
   name: "cart",
   initialState: {
     carts: [],
-    // currentCart: "",
     products1: [],
     isLoading: false,
-    error: null,
+    error: "",
   },
   extraReducers: {
     //Get carts List
@@ -152,7 +208,7 @@ const cartSlice = createSlice({
     },
     [retriveCarts.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //choose current cart and change the target products
     [retriveCart.pending]: (state, action) => {
@@ -160,13 +216,12 @@ const cartSlice = createSlice({
     },
     [retriveCart.fulfilled]: (state, action) => {
       state.products1 = action.payload;
-      console.log(action);
       state.currentCart = action.meta.arg;
       state.isLoading = false;
     },
     [retriveCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //Insert New cart
     [InsertNewCart.pending]: (state, action) => {
@@ -178,7 +233,7 @@ const cartSlice = createSlice({
     },
     [InsertNewCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //insertProductToCart
     [insertProductToCart.pending]: (state, action) => {
@@ -186,16 +241,11 @@ const cartSlice = createSlice({
     },
     [insertProductToCart.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action);
-      // const targetProduct = state.products1.find(
-      //   (p) => p._id === action.payload
-      // );
-      // state.products1.push({ product: action.payload, quantity: 1 });
       state.products1 = action.payload.insertedProduct.products;
     },
     [insertProductToCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //remove product from the cart
     [removeeProduct.pending]: (state, action) => {
@@ -207,7 +257,8 @@ const cartSlice = createSlice({
     },
     [removeeProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      console.log(action);
+      state.error = action.payload.error;
     },
     //increse product quantity
     [increseProductQuantity.pending]: (state, action) => {
@@ -221,7 +272,8 @@ const cartSlice = createSlice({
     },
     [increseProductQuantity.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      console.log(action);
+      state.error = action.payload.error;
     },
     //decrese product quantity
     [decreseProductQuantity.pending]: (state, action) => {
@@ -235,24 +287,9 @@ const cartSlice = createSlice({
     },
     [decreseProductQuantity.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      console.log(action);
+      state.error = action.payload.error;
     },
-
-    // Delete book
-    // [deleteBook.pending]: (state, action) => {
-    //   state.isLoading = true;
-    // },
-    // [deleteBook.fulfilled]: (state, action) => {
-    //   state.isLoading = false;
-    //   state.books = state.books.filter((book) => book.id !== action.payload);
-    // },
-    // [deleteBook.rejected]: (state, action) => {
-    //   state.isLoading = false;
-    // },
-    // // loged IN / Out
-    // [logedInOut]: (state, action) => {
-    //   console.log(action);
-    // },
   },
 });
 

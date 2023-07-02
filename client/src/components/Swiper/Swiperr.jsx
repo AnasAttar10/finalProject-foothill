@@ -12,14 +12,12 @@ const Swiperr = ({ items, selectTargetCategory }) => {
       <div style={{ maxWidth: maxWidth }}>
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}
-          // spaceBetween={50}
           slidesPerView={screenWidth / 400}
-          // slidesPerView={3}
           navigation
           // pagination={{ clickable: true }}
           scrollbar={{ draggable: true }}
         >
-          {items.map((item) => (
+          {items?.map((item) => (
             <SwiperSlide key={item._id}>
               <CategoriesContainer
                 category={item}

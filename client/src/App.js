@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Route, Routes } from "react-router-dom";
-import { CssBaseline, createTheme } from "@mui/material";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { CssBaseline, Switch, createTheme } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import { pink, teal } from "@mui/material/colors";
 import ResponsiveDrawer from "./components/ResponsiveDrawer/ResponsiveDrawerUi";
@@ -13,6 +13,9 @@ import CategoriesPage from "./pages/Categories/CategoriesPage";
 import MyCart from "./components/MyCart/MyCart";
 import PosPage from "./pages/PosPage/PosPage";
 import UnitsPage from "./pages/UnitsPage/UnitsPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import { useDispatch, useSelector } from "react-redux";
 const App = () => {
   const [modee, setModee] = useState("light");
   const darkTheme = createTheme({
@@ -21,17 +24,11 @@ const App = () => {
       mode: modee,
       ...(modee === "light"
         ? {
-            anas: {
-              main: "teal",
-            },
             activeLink: {
               main: pink[500],
             },
           }
         : {
-            anas: {
-              main: "red",
-            },
             activeLink: {
               main: teal[500],
             },
@@ -52,20 +49,51 @@ const App = () => {
               <ResponsiveDrawer changeTheMode={changeTheMode} modee={modee} />
             }
           >
-            <Route index element={<Home />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="categories" element={<CategoriesPage />} />
-            <Route path="units" element={<UnitsPage />} />
-            <Route path="pos" element={<PosPage />} />
+            <Route
+              index
+              element={
+                <ProtectedRouteToAdmin>
+                  <Home />
+                </ProtectedRouteToAdmin>
+              }
+            />
+            <Route
+              path="products"
+              element={
+                <ProtectedRouteToAdmin>
+                  <ProductsPage />
+                </ProtectedRouteToAdmin>
+              }
+            />
+            <Route
+              path="categories"
+              element={
+                <ProtectedRouteToAdmin>
+                  <CategoriesPage />
+                </ProtectedRouteToAdmin>
+              }
+            />
+            <Route
+              path="units"
+              element={
+                <ProtectedRouteToAdmin>
+                  <UnitsPage />
+                </ProtectedRouteToAdmin>
+              }
+            />
+            <Route
+              path="pos"
+              element={
+                <ProtectedRouteToLoggedIn>
+                  <PosPage />
+                </ProtectedRouteToLoggedIn>
+              }
+            />
           </Route>
-          {/* <Route
-            path="/admin"
-            element={
-              <ResponsiveDrawer changeTheMode={changeTheMode} modee={modee} />
-            }
-          >
-            <Route index path="pos" element={<PosPage />} />
-          </Route> */}
+
+          <Route path="login" element={<LoginPage />} />
+
+          <Route path="register" element={<RegisterPage />} />
         </Routes>
       </ThemeProvider>
     </div>
@@ -73,3 +101,24 @@ const App = () => {
 };
 
 export default App;
+
+const ProtectedRouteToAdmin = ({ children }) => {
+  const token = localStorage.getItem("token");
+  const location = useLocation();
+  const isAdmin = JSON.parse(localStorage.getItem("userInfo"))?.isAdmin;
+  if (!token || !isAdmin) {
+    return <Navigate to={"/login"} replace state={{ from: location }} />;
+  } else {
+    return children;
+  }
+};
+
+const ProtectedRouteToLoggedIn = ({ children }) => {
+  const location = useLocation();
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to={"/login"} replace state={{ from: location }} />;
+  } else {
+    return children;
+  }
+};

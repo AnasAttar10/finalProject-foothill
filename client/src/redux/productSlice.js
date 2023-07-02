@@ -1,14 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import { logedInOut } from "./authSlice";
 const EXTERNAL_API = `http://localhost:8000/product`;
 export const retriveProducts = createAsyncThunk(
   "product/getProducts",
   async (_, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(EXTERNAL_API);
+      const res = await fetch(EXTERNAL_API, { headers });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -17,11 +22,17 @@ export const retriveProducts = createAsyncThunk(
 export const retriveProduct = createAsyncThunk(
   "product/retriveProduct",
   async (id, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(`${EXTERNAL_API}/${id}`);
+      const res = await fetch(`${EXTERNAL_API}/${id}`, { headers });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -32,18 +43,23 @@ export const insertNewProduct = createAsyncThunk(
   "product/insertProduct",
   async (newProduct, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
+
     try {
       const res = await fetch(EXTERNAL_API, {
         method: "POST",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newProduct),
       });
-      const success = await res.json();
-      console.log(success);
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -52,19 +68,24 @@ export const insertNewProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ id, updatedProduct }, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
-    console.log(id, updatedProduct);
-    // newBook.userName = getState().auth.userName;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+
     try {
       const res = await fetch(`${EXTERNAL_API}/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedProduct),
       });
-      const success = await res.json();
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -73,12 +94,24 @@ export const updateProduct = createAsyncThunk(
 export const removeProduct = createAsyncThunk(
   "product/deleteProduct",
   async (id, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+
+    const headers = { Authorization: `anas__${token}` };
+    const token = getState().auth.token;
+
     try {
       const res = await fetch(EXTERNAL_API + "/" + id, {
         method: "DELETE",
+        headers,
       });
-      return id;
+      const data = await res.json();
+      console.log("data");
+      console.log(data);
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return id;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -90,7 +123,7 @@ const productSlice = createSlice({
     products: [],
     targetProduct: "",
     isLoading: false,
-    error: null,
+    error: "",
   },
   extraReducers: {
     //Get product List
@@ -98,13 +131,12 @@ const productSlice = createSlice({
       state.isLoading = true;
     },
     [retriveProducts.fulfilled]: (state, action) => {
-      // console.log(action);
       state.isLoading = false;
       state.products = action.payload.products;
     },
     [retriveProducts.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // get product
     [retriveProduct.pending]: (state, action) => {
@@ -112,12 +144,11 @@ const productSlice = createSlice({
     },
     [retriveProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action);
       state.targetProduct = action.payload.product;
     },
     [retriveProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // Insert New Product
     [insertNewProduct.pending]: (state, action) => {
@@ -125,12 +156,11 @@ const productSlice = createSlice({
     },
     [insertNewProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
-      // console.log(action);
       state.products.push(action.payload.newProduct);
     },
     [insertNewProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // update product
     [updateProduct.pending]: (state, action) => {
@@ -138,14 +168,13 @@ const productSlice = createSlice({
     },
     [updateProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action);
       const { id } = action.meta.arg;
       const targetIndex = state.products.findIndex((c) => c._id === id);
       state.products[targetIndex] = action.payload.updatedProduct;
     },
     [updateProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // Delete Product
     [removeProduct.pending]: (state, action) => {
@@ -159,11 +188,9 @@ const productSlice = createSlice({
     },
     [removeProduct.rejected]: (state, action) => {
       state.isLoading = false;
+      console.log(action);
+      state.error = "couldn't delete this product";
     },
-    // loged IN / Out
-    // [logedInOut]: (state, action) => {
-    //   console.log(action);
-    // },
   },
 });
 

@@ -1,0 +1,44 @@
+/* //https://www.bigbasketco.com/wp-content/uploads/Good-l-corp-personal-shopping-carts-choose-one-right-features-your-store.jpg */
+
+.parent{
+   /* justify-content: "space-between"; */
+   height: "100vh";
+   display: "flex";
+  justify-content: "space-between";
+  align-items: center;
+  border: 1px solid red ;
+}
+.img-container{
+  height: 180px;
+  width: 50%;
+  margin: auto;
+}  
+.img-container > img {
+  width: 100%;
+  height: 100%;
+}
+.anas {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45vw;
+    height: 45vw;
+    background-color: green;
+    border-radius:0 0 0 45vw;
+
+    background-image: url("https://cdn.shopify.com/s/files/1/0550/2343/5992/articles/online-shopping-in-Pakistan.jpg?v=1633035087");
+    background-image: url("https://www.bigbasketco.com/wp-content/uploads/Good-l-corp-personal-shopping-carts-choose-one-right-features-your-store.jpg");
+    background-position: 1500px 1000px;
+  }
+
+  /* @media (max-width: 575.98px){ */
+  @media (max-width: 900px){
+
+    /* .anas{
+      display: none;
+    } */
+    .imageContainer{
+      border: 1px solid green;
+      display: none;
+    }
+  }

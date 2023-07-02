@@ -5,7 +5,7 @@ module.exports.getCarts = async (req, res) => {
     const carts = await Cart.find({}).populate("products.product");
     res.status(200).json({ messgae: "carts have been Retrived ", carts });
   } catch (e) {
-    res.status(404).json({ message: "Coudn't find carts", error: e });
+    res.status(404).json({ error: "Coudn't find carts", errors: e });
   }
 };
 
@@ -15,7 +15,7 @@ module.exports.getCart = async (req, res) => {
     const cart = await Cart.find({ _id: id }).populate("products.product");
     res.status(200).json({ messgae: "Single cart have been Retrived ", cart });
   } catch (e) {
-    res.status(404).json({ message: "Coudn't find carts", error: e });
+    res.status(404).json({ error: "Coudn't find carts", errors: e });
   }
 };
 
@@ -26,7 +26,7 @@ module.exports.newCart = async (req, res) => {
     newCart = await newCart.save();
     res.status(201).json({ message: "cart added successfully", newCart });
   } catch (e) {
-    res.status(404).json({ message: "coudln't add cart", error: e });
+    res.status(404).json({ error: "couldn't add cart", errors: e });
   }
 };
 module.exports.deleteCart = async (req, res) => {
@@ -36,8 +36,8 @@ module.exports.deleteCart = async (req, res) => {
     res.status(200).json({ messgae: "cart deleted successfully", deletedCart });
   } catch (e) {
     res.status(404).json({
-      messgae: "couldn't  delete the cart with id :" + id,
-      error: e,
+      error: "couldn't  delete the cart with id :" + id,
+      errors: e,
     });
   }
 };
@@ -63,15 +63,15 @@ module.exports.updateProductQuantity = async (req, res) => {
       .status(201)
       .json({ messgae: "product qunatity updated successfully", updatedCarts });
   } catch (e) {
-    res.status(404).json({ messgae: "couldn't update product quantity" });
+    res
+      .status(404)
+      .json({ error: "couldn't update product quantity", errors: e });
   }
 };
 module.exports.insertProductToCart = async (req, res) => {
   const { id, productId } = req.params;
-  // const { newProduct } = req.body;
   const newProduct = { product: productId, quantity: 1 };
   try {
-    // const insertedProduct = await Cart.updateOne(
     const insertedProduct = await Cart.findByIdAndUpdate(
       { _id: id },
       { $push: { products: newProduct } },
@@ -84,11 +84,11 @@ module.exports.insertProductToCart = async (req, res) => {
       messgae: "product added to the cart successfully",
       insertedProduct,
     });
-    console.log(insertedProduct);
     return insertedProduct;
-    // return productId;
   } catch (e) {
-    res.status(404).json({ messgae: "couldn't insert product to cart " });
+    res
+      .status(404)
+      .json({ error: "couldn't insert product to cart ", errors: e });
   }
 };
 
@@ -112,6 +112,8 @@ module.exports.deleteProduct = async (req, res) => {
       updatedCarts,
     });
   } catch (e) {
-    res.status(404).json({ messgae: "couldn't remove product from this cart" });
+    res
+      .status(404)
+      .json({ error: "couldn't remove product from this cart", errors: e });
   }
 };

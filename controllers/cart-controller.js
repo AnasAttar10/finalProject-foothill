@@ -21,6 +21,4 @@ router.put("/:id/productquantity/:productId", updateProductQuantity);
 
 router.delete("/:id/removeproduct/:productId", deleteProduct);
 
-// router.delete("/:id/product/:productId", deleteProduct);
-
 module.exports = router;

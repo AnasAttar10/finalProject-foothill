@@ -5,9 +5,11 @@ module.exports.getProducts = async (req, res) => {
     const products = await Product.find({})
       .populate("category")
       .populate("unitOfMeasure");
-    res.status(200).json({ messgae: "products have been Retrived", products });
+    return res
+      .status(200)
+      .json({ messgae: "products have been Retrived", products });
   } catch (e) {
-    res.status(404).json({ message: "couldn't find products", error: e });
+    return res.status(404).json({ error: "couldn't find products", errors: e });
   }
 };
 
@@ -19,7 +21,7 @@ module.exports.newProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).json({ messgae: "product added successfully", newProduct });
   } catch (e) {
-    res.status(404).json({ message: "couldn't create the product", error: e });
+    res.status(404).json({ error: "couldn't create the product", errors: e });
   }
 };
 module.exports.getProduct = async (req, res) => {
@@ -32,7 +34,7 @@ module.exports.getProduct = async (req, res) => {
       .status(200)
       .json({ message: "Single product have been Retrived ", product });
   } catch (e) {
-    res.status(404).json({ message: "couldn't get the product" });
+    res.status(404).json({ error: "couldn't get the product", errors });
   }
 };
 module.exports.updateProduct = async (req, res) => {
@@ -51,7 +53,7 @@ module.exports.updateProduct = async (req, res) => {
       .status(201)
       .json({ message: "product updated successfully", updatedProduct });
   } catch (e) {
-    res.status(404).json({ message: "couldn't update the product", error: e });
+    res.status(404).json({ error: "couldn't update the product", errors: e });
   }
 };
 
@@ -63,6 +65,6 @@ module.exports.deleteProduct = async (req, res) => {
       .status(200)
       .json({ message: "product deleted successfully", deletedProduct });
   } catch (e) {
-    res.status(404).json({ message: "couldn't delete the product", error: e });
+    res.status(404).json({ error: "couldn't delete the product", errors: e });
   }
 };

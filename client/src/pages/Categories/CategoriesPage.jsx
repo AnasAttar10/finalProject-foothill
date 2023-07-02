@@ -9,6 +9,7 @@ import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import withGuard from "../../utils/withGuard";
 import { retriveCategories } from "../../redux/categorySlice";
+import ShowErrors from "../../components/ShowErrors/ShowErrors";
 const CategoriesPage = ({
   isUpdateForm,
   setIsUpdateForm,
@@ -21,13 +22,14 @@ const CategoriesPage = ({
   const { categories, targetCategory, isLoading, error } = useSelector(
     (state) => state.category
   );
-  // const [itemToUpdate, setItemToUpdate] = useState(targetCategory);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retriveCategories());
   }, [dispatch]);
   return (
     <>
+      <ShowErrors error={error} />
+
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"

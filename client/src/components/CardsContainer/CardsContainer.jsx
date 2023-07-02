@@ -5,7 +5,7 @@ import { Box, Grid } from "@mui/material";
 const CardsContainer = ({ filterdProducts }) => {
   const { targetItems } = useContext(ContainerContext);
   const displayProducts = () => {
-    return targetItems.map((p, index) => (
+    return targetItems?.map((p, index) => (
       <Cardui key={p._id} product={p} index={index} />
     ));
   };

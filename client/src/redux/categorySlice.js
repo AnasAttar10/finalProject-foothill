@@ -1,14 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import { logedInOut } from "./authSlice";
 const EXTERNAL_API = `http://localhost:8000/category`;
 export const retriveCategories = createAsyncThunk(
   "category/getCategoriess",
   async (_, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const currentUser = getState().auth.userName;
+    console.log(currentUser);
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(EXTERNAL_API);
+      const res = await fetch(EXTERNAL_API, { headers });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -17,11 +24,17 @@ export const retriveCategories = createAsyncThunk(
 export const retriveCategory = createAsyncThunk(
   "category/retriveCategory",
   async (id, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(`${EXTERNAL_API}/${id}`);
+      const res = await fetch(`${EXTERNAL_API}/${id}`, { headers });
       const data = await res.json();
-      return data;
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -31,17 +44,22 @@ export const insertNewCategory = createAsyncThunk(
   "category/insertCategory",
   async (newCategory, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
     try {
       const res = await fetch(EXTERNAL_API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `anas__${token}`,
         },
         body: JSON.stringify(newCategory),
       });
-      const success = await res.json();
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -51,17 +69,22 @@ export const updateCategory = createAsyncThunk(
   "category/udateCategory",
   async ({ id, newCategory }, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
-    // newBook.userName = getState().auth.userName;
+    const token = getState().auth.token;
     try {
       const res = await fetch(`${EXTERNAL_API}/${id}`, {
         method: "PUT",
         headers: {
+          Authorization: `anas__${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newCategory),
       });
-      const success = await res.json();
-      return success;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -71,11 +94,19 @@ export const removeCategory = createAsyncThunk(
   "category/deleteCategory",
   async (id, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(`${EXTERNAL_API}/${id}`, {
         method: "DELETE",
+        headers,
       });
-      return id;
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return id;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -88,7 +119,7 @@ const categorySlice = createSlice({
     categories: [],
     targetCategory: "",
     isLoading: false,
-    error: null,
+    error: "",
   },
   extraReducers: {
     //Get Categories List
@@ -101,7 +132,7 @@ const categorySlice = createSlice({
     },
     [retriveCategories.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // getCategory
     [retriveCategory.pending]: (state, action) => {
@@ -113,7 +144,7 @@ const categorySlice = createSlice({
     },
     [retriveCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // Insert New Category
     [insertNewCategory.pending]: (state, action) => {
@@ -125,7 +156,7 @@ const categorySlice = createSlice({
     },
     [insertNewCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     // update Category
     [updateCategory.pending]: (state, action) => {
@@ -139,7 +170,7 @@ const categorySlice = createSlice({
     },
     [updateCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.payload.error;
     },
     //Delete Category
     [removeCategory.pending]: (state, action) => {
@@ -153,11 +184,8 @@ const categorySlice = createSlice({
     },
     [removeCategory.rejected]: (state, action) => {
       state.isLoading = false;
+      state.error = action.payload.error;
     },
-    // loged IN / Out
-    // [logedInOut]: (state, action) => {
-    //   console.log(action);
-    // },
   },
 });
 

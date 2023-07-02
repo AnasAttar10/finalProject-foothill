@@ -10,6 +10,7 @@ import Container from "../../components/Containerr/Container";
 import AddUnit from "../../components/AddUnit/AddUnit";
 import { useDispatch, useSelector } from "react-redux";
 import { retriveUnits } from "../../redux/unitSlice";
+import ShowErrors from "../../components/ShowErrors/ShowErrors";
 const UnitsPage = ({
   isUpdateForm,
   setIsUpdateForm,
@@ -28,6 +29,7 @@ const UnitsPage = ({
   }, [dispatch]);
   return (
     <>
+      <ShowErrors error={error} />
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"

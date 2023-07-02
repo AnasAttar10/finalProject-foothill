@@ -1,33 +1,21 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Avatar, Button, Link } from "@mui/material";
-import { Create, Home, Logout, Person2, Settings } from "@mui/icons-material";
-import { useTheme } from "@emotion/react";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ToolBar from "../ToolBar/ToolBar";
 import Drawerr from "../Drawer/Drawerr";
 import Appbarui from "../AppBar/Appbarui";
 import ListUi from "../ListUi/ListUi";
 import MyCart from "../MyCart/MyCart";
+import { useDispatch, useSelector } from "react-redux";
 
 const ResponsiveDrawer = (props) => {
   const { pathname } = useLocation();
   let drawerWidth = 240;
   if (pathname === "/pos") drawerWidth = 350;
-  console.log(pathname);
   const { window } = props;
   const { changeTheMode, modee } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);

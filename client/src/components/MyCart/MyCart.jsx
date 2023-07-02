@@ -20,7 +20,7 @@ const MyCart = () => {
   const { carts, currentCart, products1, isLoading, error } = useSelector(
     (state) => state.cart
   );
-  console.log(products1);
+  const { userId } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
@@ -44,12 +44,10 @@ const MyCart = () => {
       resetForm();
     },
   });
-  const cartsName = carts && carts.map((c) => c.name);
-  const cartsId = carts && carts.map((c) => c._id);
+  const targetCarts = carts && carts?.filter((c) => c.userId === userId);
+  const cartsName = targetCarts && targetCarts?.map((c) => c.name);
+  const cartsId = targetCarts && targetCarts?.map((c) => c._id);
   const cartId = currentCart;
-  // console.log("my cart");
-  // const cartId = carts.find((c) => c._id === formik.values.cartId);
-  // console.log(cartId);
   const increseQuantity = (id, productQuantity) => {
     productQuantity++;
     dispatch(
@@ -63,7 +61,7 @@ const MyCart = () => {
     );
   };
   const addCart = (newCart) => {
-    const newCart1 = { name: newCart.cartName, products: [] };
+    const newCart1 = { name: newCart.cartName, products: [], userId: userId };
     dispatch(InsertNewCart(newCart1));
     newCart.value = "";
   };
@@ -71,7 +69,7 @@ const MyCart = () => {
     dispatch(removeeProduct({ cartId: cartId, productId: id }));
   };
 
-  const totalPrice = products1.reduce(
+  const totalPrice = products1?.reduce(
     (sum, currentValue) =>
       sum + currentValue.product.price * currentValue.quantity,
     0
@@ -87,27 +85,48 @@ const MyCart = () => {
   const handkeCartIdChange = (event) => {
     formik.handleChange(event);
     const formValue = event.target.value;
-    console.log("formik value ");
-    console.log(formValue);
     dispatch(retriveCart(formValue));
   };
 
-  useEffect(() => {
-    console.log("use Effect to retrive carst ");
-    dispatch(retriveCarts());
-    // dispatch(retriveCart(cartId));/
-  }, [dispatch]);
+  useEffect(
+    () => {
+      dispatch(retriveCarts());
+    },
+    [dispatch, userId],
+    error
+  );
   useEffect(() => {
     retriveCart(cartId);
-  }, [cartId]);
-  // const totalPrice = 100;
+  }, [cartId, userId, error]);
   const totalPriceAfterTax = (totalPrice * tax) / 100 + totalPrice;
   const totalPriceAfterDiscountAndTax =
     totalPriceAfterTax - (totalPriceAfterTax * discount) / 100;
   return (
     <Box>
+      <p style={{ p: 1, textAlign: "center", color: "red", boxShadow: 3 }}>
+        {error}
+      </p>
       <Box sx={{ m: 1, p: 1, boxShadow: 3 }}>
         <AddCart addCart={addCart} />
+      </Box>
+      <Box
+        component="div"
+        sx={{
+          flexShrink: { sm: 0 },
+          overflow: "auto",
+          height: "220px",
+        }}
+        aria-label="mailbox folders"
+      >
+        {products1?.map((p) => (
+          <CartItem
+            key={p._id}
+            product={p}
+            removeProduct={removeProduct}
+            increseQuantity={increseQuantity}
+            decreseQuantity={decreseQuantity}
+          />
+        ))}
       </Box>
       <Box sx={{ boxShadow: 3, m: 1, p: 1 }}>
         <form onSubmit={formik.handleSubmit}>
@@ -122,7 +141,7 @@ const MyCart = () => {
               value={formik.values.cartId}
             >
               <option defaultValue>Select your Cart </option>
-              {cartsName.map((v, i) => (
+              {cartsName?.map((v, i) => (
                 <option value={cartsId[i]} key={Math.random()}>
                   {v}
                 </option>
@@ -169,27 +188,6 @@ const MyCart = () => {
             cancel
           </Button>
         </form>
-        <Box
-          component="div"
-          sx={{
-            flexShrink: { sm: 0 },
-            overflow: "auto",
-            height: "220px",
-            margin: "5px",
-          }}
-          aria-label="mailbox folders"
-        >
-          {/* {cartId && */}
-          {products1?.map((p) => (
-            <CartItem
-              key={p._id}
-              product={p}
-              removeProduct={removeProduct}
-              increseQuantity={increseQuantity}
-              decreseQuantity={decreseQuantity}
-            />
-          ))}
-        </Box>
       </Box>
     </Box>
   );
