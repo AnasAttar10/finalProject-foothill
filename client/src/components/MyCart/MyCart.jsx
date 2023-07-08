@@ -14,6 +14,7 @@ import {
   increseProductQuantity,
   removeeProduct,
   retriveCarts,
+  removeCart,
 } from "../../redux/cartSlice";
 
 const MyCart = () => {
@@ -40,7 +41,8 @@ const MyCart = () => {
         .min(0, "should be more than or equal 0 "),
     }),
     onSubmit: (values, { resetForm }) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
+      dispatch(removeCart(values.cartId));
       resetForm();
     },
   });
@@ -69,11 +71,6 @@ const MyCart = () => {
     dispatch(removeeProduct({ cartId: cartId, productId: id }));
   };
 
-  const totalPrice = products1?.reduce(
-    (sum, currentValue) =>
-      sum + currentValue.product.price * currentValue.quantity,
-    0
-  );
   const handletaxChange = (event) => {
     setTax(event.target.value);
     formik.handleChange(event);
@@ -98,14 +95,16 @@ const MyCart = () => {
   useEffect(() => {
     retriveCart(cartId);
   }, [cartId, userId, error]);
+  const totalPrice = products1?.reduce(
+    (sum, currentValue) =>
+      sum + currentValue.product.price * currentValue.quantity,
+    0
+  );
   const totalPriceAfterTax = (totalPrice * tax) / 100 + totalPrice;
   const totalPriceAfterDiscountAndTax =
     totalPriceAfterTax - (totalPriceAfterTax * discount) / 100;
   return (
     <Box>
-      <p style={{ p: 1, textAlign: "center", color: "red", boxShadow: 3 }}>
-        {error}
-      </p>
       <Box sx={{ m: 1, p: 1, boxShadow: 3 }}>
         <AddCart addCart={addCart} />
       </Box>
@@ -114,7 +113,7 @@ const MyCart = () => {
         sx={{
           flexShrink: { sm: 0 },
           overflow: "auto",
-          height: "220px",
+          height: "200px",
         }}
         aria-label="mailbox folders"
       >

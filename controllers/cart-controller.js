@@ -7,6 +7,7 @@ const {
   insertProductToCart,
   updateProductQuantity,
   deleteProduct,
+  deleteCart,
 } = require("../services/cart-services");
 
 router.get("/", getCarts);
@@ -14,6 +15,8 @@ router.get("/", getCarts);
 router.post("/", newCart);
 
 router.get("/:id", getCart);
+
+router.delete("/:id", deleteCart);
 
 router.put("/:id/product/:productId", insertProductToCart);
 

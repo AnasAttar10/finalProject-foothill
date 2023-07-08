@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import toast, { Toaster } from "react-hot-toast";
 const EXTERNAL_API = `http://localhost:8000/product`;
 export const retriveProducts = createAsyncThunk(
   "product/getProducts",
@@ -6,6 +7,7 @@ export const retriveProducts = createAsyncThunk(
     const { rejectWithValue, getState } = thunkAPI;
     const token = getState().auth.token;
     const headers = { Authorization: `anas__${token}` };
+
     try {
       const res = await fetch(EXTERNAL_API, { headers });
       const data = await res.json();
@@ -44,7 +46,6 @@ export const insertNewProduct = createAsyncThunk(
   async (newProduct, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
     const token = getState().auth.token;
-
     try {
       const res = await fetch(EXTERNAL_API, {
         method: "POST",
@@ -95,9 +96,9 @@ export const removeProduct = createAsyncThunk(
   "product/deleteProduct",
   async (id, thunkAPI) => {
     const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
 
     const headers = { Authorization: `anas__${token}` };
-    const token = getState().auth.token;
 
     try {
       const res = await fetch(EXTERNAL_API + "/" + id, {
@@ -105,12 +106,61 @@ export const removeProduct = createAsyncThunk(
         headers,
       });
       const data = await res.json();
-      console.log("data");
-      console.log(data);
       if (data.error) {
         return rejectWithValue(data);
       } else {
-        return id;
+        return data;
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+export const uploadProductPicture = createAsyncThunk(
+  "product/uploadProductPicture",
+  async ({ productPicture }, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const id = getState().product.productIdForTheImage;
+    const formData = new FormData();
+    formData.set("image", productPicture);
+    try {
+      const res = await fetch(`${EXTERNAL_API}/productPicture/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `anas__${token}`,
+        },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        localStorage.setItem("success", true);
+        return data;
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+export const getProductsCount = createAsyncThunk(
+  "product/getproductsCount",
+  async (_, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    try {
+      const res = await fetch(`${EXTERNAL_API}/count/`, {
+        method: "GET",
+        headers: {
+          Authorization: `anas__${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
       }
     } catch (err) {
       return rejectWithValue(err.message);
@@ -124,6 +174,8 @@ const productSlice = createSlice({
     targetProduct: "",
     isLoading: false,
     error: "",
+    productIdForTheImage: "",
+    productsCount: 0,
   },
   extraReducers: {
     //Get product List
@@ -145,6 +197,7 @@ const productSlice = createSlice({
     [retriveProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.targetProduct = action.payload.product;
+      state.productIdForTheImage = action.payload.product._id;
     },
     [retriveProduct.rejected]: (state, action) => {
       state.isLoading = false;
@@ -156,11 +209,16 @@ const productSlice = createSlice({
     },
     [insertNewProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
+      state.productIdForTheImage = action.payload.newProduct._id;
       state.products.push(action.payload.newProduct);
+      toast.success(action.payload.message);
     },
     [insertNewProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     // update product
     [updateProduct.pending]: (state, action) => {
@@ -171,10 +229,14 @@ const productSlice = createSlice({
       const { id } = action.meta.arg;
       const targetIndex = state.products.findIndex((c) => c._id === id);
       state.products[targetIndex] = action.payload.updatedProduct;
+      toast.success(action.payload.message);
     },
     [updateProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     // Delete Product
     [removeProduct.pending]: (state, action) => {
@@ -183,13 +245,48 @@ const productSlice = createSlice({
     [removeProduct.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.products = state.products.filter(
-        (product) => product._id !== action.payload
+        (product) => product._id !== action.payload.deletedProduct._id
       );
+      toast.success(action.payload.message);
     },
     [removeProduct.rejected]: (state, action) => {
       state.isLoading = false;
-      console.log(action);
-      state.error = "couldn't delete this product";
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
+    },
+    // get Products Count
+    [getProductsCount.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [getProductsCount.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.productsCount = action.payload.count;
+    },
+    [getProductsCount.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
+    },
+    // upload  Product Image
+    [uploadProductPicture.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [uploadProductPicture.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.products.find((p) => p._id === state.productIdForTheImage).image =
+        action.payload.image;
+      // toast.success(action.payload.message);
+    },
+    [uploadProductPicture.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      // toast.error(state.error);
     },
   },
 });

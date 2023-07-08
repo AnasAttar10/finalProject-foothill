@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import { logedInOut } from "./authSlice";
+import toast, { Toaster } from "react-hot-toast";
 const EXTERNAL_API = `http://localhost:8000/cart`;
-// const token = JSON.parse(localStorage.getItem("token"));
-
 export const retriveCarts = createAsyncThunk(
   "cart/getCarts",
   async (_, thunkAPI) => {
@@ -188,12 +186,39 @@ export const decreseProductQuantity = createAsyncThunk(
     }
   }
 );
+export const removeCart = createAsyncThunk(
+  "cart/removeCart",
+  async (id, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
+    try {
+      const res = await fetch(
+        `${EXTERNAL_API}/${id}`,
+        { method: "DELETE" },
+        { headers }
+      );
+      const data = await res.json();
+      console.log(data);
+      console.log(data);
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
+      }
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
     carts: [],
     products1: [],
+    currentCart: "",
     isLoading: false,
     error: "",
   },
@@ -205,10 +230,16 @@ const cartSlice = createSlice({
     [retriveCarts.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.carts = action.payload.carts;
+      state.products1 = [];
+      state.currentCart = "";
     },
     [retriveCarts.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
     //choose current cart and change the target products
     [retriveCart.pending]: (state, action) => {
@@ -221,7 +252,11 @@ const cartSlice = createSlice({
     },
     [retriveCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
     //Insert New cart
     [InsertNewCart.pending]: (state, action) => {
@@ -230,10 +265,37 @@ const cartSlice = createSlice({
     [InsertNewCart.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.carts.push(action.payload.newCart);
+      toast.success(action.payload.message);
     },
     [InsertNewCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
+    },
+    //remove cart
+    [removeCart.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [removeCart.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      console.log(action);
+      state.carts = state.carts.filter(
+        (c) => c._id !== action.payload.deletedCart._id
+      );
+      state.products1 = [];
+      state.currentCart = "";
+      toast.success(`Thank You `);
+    },
+    [removeCart.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
     //insertProductToCart
     [insertProductToCart.pending]: (state, action) => {
@@ -242,11 +304,17 @@ const cartSlice = createSlice({
     [insertProductToCart.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.products1 = action.payload.insertedProduct.products;
+      toast.success("Added product Successfully");
     },
     [insertProductToCart.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
+
     //remove product from the cart
     [removeeProduct.pending]: (state, action) => {
       state.isLoading = true;
@@ -258,7 +326,11 @@ const cartSlice = createSlice({
     [removeeProduct.rejected]: (state, action) => {
       state.isLoading = false;
       console.log(action);
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
     //increse product quantity
     [increseProductQuantity.pending]: (state, action) => {
@@ -273,7 +345,11 @@ const cartSlice = createSlice({
     [increseProductQuantity.rejected]: (state, action) => {
       state.isLoading = false;
       console.log(action);
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
     //decrese product quantity
     [decreseProductQuantity.pending]: (state, action) => {
@@ -288,7 +364,11 @@ const cartSlice = createSlice({
     [decreseProductQuantity.rejected]: (state, action) => {
       state.isLoading = false;
       console.log(action);
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      console.log(action.payload);
+      toast.error(state.error);
     },
   },
 });

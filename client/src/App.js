@@ -1,46 +1,30 @@
 import * as React from "react";
-import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { CssBaseline, Switch, createTheme } from "@mui/material";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { CssBaseline, createTheme } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
-import { pink, teal } from "@mui/material/colors";
 import ResponsiveDrawer from "./components/ResponsiveDrawer/ResponsiveDrawerUi";
 import Home from "./components/Home";
-import Create from "./components/Create";
 import { useState } from "react";
 import "./App.css";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
-import MyCart from "./components/MyCart/MyCart";
 import PosPage from "./pages/PosPage/PosPage";
 import UnitsPage from "./pages/UnitsPage/UnitsPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
-import { useDispatch, useSelector } from "react-redux";
+import getDesignTokens from "./styles/MyTheme";
 const App = () => {
   const [modee, setModee] = useState("light");
-  const darkTheme = createTheme({
-    palette: {
-      // mode:modee
-      mode: modee,
-      ...(modee === "light"
-        ? {
-            activeLink: {
-              main: pink[500],
-            },
-          }
-        : {
-            activeLink: {
-              main: teal[500],
-            },
-          }),
-    },
-  });
   const changeTheMode = () => {
     modee === "dark" ? setModee("light") : setModee("dark");
   };
+  const theme = React.useMemo(
+    () => createTheme(getDesignTokens(modee)),
+    [modee]
+  );
   return (
     <div className="App">
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
           <Route

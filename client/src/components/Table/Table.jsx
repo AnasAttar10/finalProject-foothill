@@ -59,29 +59,6 @@ const Table = ({
             <tbody>{displayProducts()}</tbody>
           </>
         )}
-
-        {/* {type === "products" && ( */}
-        {/* <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Category</th>
-            <th>Image</th>
-            <th>Price</th>
-            <th>unitOfMeasure</th>
-            <th>update</th>
-            <th>remove</th>
-          </tr> */}
-        {/* )} */}
-        {/* {type === "categories" && (
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Image</th>
-            <th>update</th>
-            <th>remove</th>
-          </tr>
-        )} */}
       </table>
     </Box>
   );

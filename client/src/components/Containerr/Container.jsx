@@ -31,7 +31,7 @@ const Container = ({ children, items, pagesizeProp, type }) => {
     return index >= start && index < end;
   });
   const canIncreasePageNumbering =
-    Number.parseInt(filterdItems?.length / pageSize) + 1 !== page;
+    Number.parseInt((filterdItems?.length - 1) / pageSize) + 1 !== page;
   const value = { targetItems, filterdValue, handleFilter, type };
   return (
     <ContainerContext.Provider value={value}>

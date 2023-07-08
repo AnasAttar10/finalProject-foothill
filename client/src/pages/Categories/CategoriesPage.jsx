@@ -9,27 +9,28 @@ import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import withGuard from "../../utils/withGuard";
 import { retriveCategories } from "../../redux/categorySlice";
-import ShowErrors from "../../components/ShowErrors/ShowErrors";
+import toast, { Toaster } from "react-hot-toast";
 const CategoriesPage = ({
   isUpdateForm,
   setIsUpdateForm,
-  updatedItemId,
   setUpdatedItemId,
   showModal,
   setShowModal,
   closeModal,
+  dispatch,
 }) => {
   const { categories, targetCategory, isLoading, error } = useSelector(
     (state) => state.category
   );
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retriveCategories());
   }, [dispatch]);
   return (
     <>
-      <ShowErrors error={error} />
-
+      <div>
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"
@@ -49,6 +50,7 @@ const CategoriesPage = ({
           isUpdateForm={isUpdateForm}
           dispatch={dispatch}
           itemToUpdate={targetCategory}
+          setShowModal={setShowModal}
         />
       </Modal>
       <Container

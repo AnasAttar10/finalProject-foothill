@@ -10,16 +10,13 @@ import { logout } from "../../redux/authSlice";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Appbarui = ({ drawerWidth, handleDrawerToggle }) => {
   const { userName, userImage, isAdmin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log("state was updated");
-  }, [userName, userImage, isAdmin]);
-  console.log(userName, userImage, isAdmin);
+  useEffect(() => {}, [userName, userImage, isAdmin]);
   return (
     <AppBar
       position="fixed"
@@ -49,7 +46,13 @@ const Appbarui = ({ drawerWidth, handleDrawerToggle }) => {
           }}
         >
           {/* Responsive drawer */}
-          {userName}
+          {isAdmin ? (
+            <Link to={"/"} style={{ color: "white", textDecoration: "none" }}>
+              {userName}
+            </Link>
+          ) : (
+            userName
+          )}
         </Typography>
         {!isAdmin && (
           <Button
@@ -62,7 +65,7 @@ const Appbarui = ({ drawerWidth, handleDrawerToggle }) => {
             Logout
           </Button>
         )}
-        <Avatar alt="Remy Sharp" src={userImage} />
+        <Avatar alt={userName} src={userImage} />
       </Toolbar>
     </AppBar>
   );

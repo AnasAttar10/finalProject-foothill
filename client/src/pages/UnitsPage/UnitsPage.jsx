@@ -3,33 +3,34 @@ import withGuard from "../../utils/withGuard";
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Modal from "../../components/Modal/Modal";
-// import AddUnit from "../../components/AddUnit";
 import Filter from "../../components/Filter/Filter";
 import Table from "../../components/Table/Table";
 import Container from "../../components/Containerr/Container";
 import AddUnit from "../../components/AddUnit/AddUnit";
 import { useDispatch, useSelector } from "react-redux";
 import { retriveUnits } from "../../redux/unitSlice";
-import ShowErrors from "../../components/ShowErrors/ShowErrors";
+import toast, { Toaster } from "react-hot-toast";
 const UnitsPage = ({
   isUpdateForm,
   setIsUpdateForm,
-  updatedItemId,
   setUpdatedItemId,
   showModal,
   setShowModal,
   closeModal,
+  dispatch,
 }) => {
   const { units, targetUnit, isLoading, error } = useSelector(
     (state) => state.unit
   );
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retriveUnits());
   }, [dispatch]);
   return (
     <>
-      <ShowErrors error={error} />
+      <div>
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"
@@ -49,6 +50,7 @@ const UnitsPage = ({
           isUpdateForm={isUpdateForm}
           dispatch={dispatch}
           itemToUpdate={targetUnit}
+          setShowModal={setShowModal}
         />
       </Modal>
       <Container items={units ? units : []} type="units" pagesizeProp={8}>

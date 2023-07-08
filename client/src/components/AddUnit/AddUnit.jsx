@@ -6,7 +6,7 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { Button } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { insertNewUnit, updateUnit } from "../../redux/unitSlice";
-const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch }) => {
+const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch, setShowModal }) => {
   const formik = useFormik({
     initialValues: {
       name: itemToUpdate && isUpdateForm ? itemToUpdate.name : "",
@@ -26,7 +26,7 @@ const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch }) => {
         .required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       if (isUpdateForm) {
         const id = itemToUpdate._id;
         dispatch(updateUnit({ id, newUnit: values }));
@@ -34,6 +34,7 @@ const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch }) => {
         dispatch(insertNewUnit(values));
       }
       resetForm();
+      setShowModal(false);
     },
   });
   return (

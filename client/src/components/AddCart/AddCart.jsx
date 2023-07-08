@@ -17,8 +17,7 @@ const AddCart = ({ addCart }) => {
         .max(100, "should be less than 100 "),
     }),
     onSubmit: (values, { resetForm }) => {
-      alert(JSON.stringify(values, null, 2));
-      console.log(values);
+      // alert(JSON.stringify(values, null, 2));
       addCart(values);
 
       resetForm();

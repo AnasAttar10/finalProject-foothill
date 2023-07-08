@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import toast, { Toaster } from "react-hot-toast";
 const EXTERNAL_API = `http://localhost:8000/category`;
 export const retriveCategories = createAsyncThunk(
   "category/getCategoriess",
@@ -6,7 +7,6 @@ export const retriveCategories = createAsyncThunk(
     const { rejectWithValue, getState } = thunkAPI;
     const token = getState().auth.token;
     const currentUser = getState().auth.userName;
-    console.log(currentUser);
     const headers = { Authorization: `anas__${token}` };
     try {
       const res = await fetch(EXTERNAL_API, { headers });
@@ -105,7 +105,59 @@ export const removeCategory = createAsyncThunk(
       if (data.error) {
         return rejectWithValue(data);
       } else {
-        return id;
+        return data;
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+export const uploadCategoryPicture = createAsyncThunk(
+  "category/uploadCategoryPicture",
+  async ({ categoryPicture }, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const id = getState().category.categoryIdForTheImage;
+    const formData = new FormData();
+    formData.set("image", categoryPicture);
+    try {
+      const res = await fetch(`${EXTERNAL_API}/categoryPicture/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `anas__${token}`,
+        },
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        localStorage.setItem("success", true);
+        return data;
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const getcategoriesCount = createAsyncThunk(
+  "product/getcategoriesCount",
+  async (_, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    try {
+      const res = await fetch(`${EXTERNAL_API}/count/`, {
+        method: "GET",
+        headers: {
+          Authorization: `anas__${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
       }
     } catch (err) {
       return rejectWithValue(err.message);
@@ -120,6 +172,8 @@ const categorySlice = createSlice({
     targetCategory: "",
     isLoading: false,
     error: "",
+    categoryIdForTheImage: "",
+    categoriesCount: 0,
   },
   extraReducers: {
     //Get Categories List
@@ -141,6 +195,7 @@ const categorySlice = createSlice({
     [retriveCategory.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.targetCategory = action.payload.category;
+      state.categoryIdForTheImage = action.payload.category._id;
     },
     [retriveCategory.rejected]: (state, action) => {
       state.isLoading = false;
@@ -152,11 +207,16 @@ const categorySlice = createSlice({
     },
     [insertNewCategory.fulfilled]: (state, action) => {
       state.isLoading = false;
+      state.categoryIdForTheImage = action.payload.newCategory._id;
       state.categories.push(action.payload.newCategory);
+      toast.success(action.payload.message);
     },
     [insertNewCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     // update Category
     [updateCategory.pending]: (state, action) => {
@@ -167,10 +227,14 @@ const categorySlice = createSlice({
       const { id } = action.meta.arg;
       const targetIndex = state.categories.findIndex((c) => c._id === id);
       state.categories[targetIndex] = action.payload.updatedCategory;
+      toast.success(action.payload.message);
     },
     [updateCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     //Delete Category
     [removeCategory.pending]: (state, action) => {
@@ -179,12 +243,46 @@ const categorySlice = createSlice({
     [removeCategory.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.categories = state.categories.filter(
-        (category) => category._id !== action.payload
+        (category) => category._id !== action.payload.deletedCategory._id
       );
+      toast.success(action.payload.message);
     },
     [removeCategory.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
+    },
+    //get Categories count
+    [getcategoriesCount.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [getcategoriesCount.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.categoriesCount = action.payload.count;
+      // toast.success(action.payload.message);
+    },
+    [getcategoriesCount.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
+    },
+    //upload Category image
+    [uploadCategoryPicture.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [uploadCategoryPicture.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.categories.find(
+        (c) => c._id === state.categoryIdForTheImage
+      ).image = action.payload.image;
+    },
+    [uploadCategoryPicture.rejected]: (state, action) => {
+      state.isLoading = false;
+      // state.error = action.payload.error;
     },
   },
 });

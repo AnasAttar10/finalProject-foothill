@@ -24,9 +24,9 @@ module.exports.getUnit = async (req, res) => {
   const { id } = req.params;
   try {
     const unit = await Unit.findById(id);
-    res.status(200).json({ messgae: "Single unit have been Retrived", unit });
+    res.status(200).json({ message: "Single unit have been Retrived", unit });
   } catch (e) {
-    res.status(404).json({ error: "couldn't  get the category", errors: e });
+    res.status(404).json({ error: "couldn't  get the unit", errors: e });
   }
 };
 module.exports.updateUnit = async (req, res) => {
@@ -51,8 +51,19 @@ module.exports.deleteUnit = async (req, res) => {
       { unitOfMeasure: id },
       { new: true }
     );
-    res.status(200).json({ messgae: "unit deleted successfully", deletedUnit });
+    res.status(200).json({ message: "unit deleted successfully", deletedUnit });
   } catch (e) {
     res.status(404).json({ error: "couldn't  delete the unit", errors: e });
+  }
+};
+module.exports.unitsCount = async (req, res) => {
+  try {
+    const unitsCount = await Unit.find({}).count();
+    res.status(200).json({
+      message: "get units count successfully",
+      count: unitsCount,
+    });
+  } catch (err) {
+    res.status(404).json({ message: "couldn't retrive the units count" });
   }
 };

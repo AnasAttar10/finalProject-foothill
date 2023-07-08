@@ -22,7 +22,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -61,10 +60,6 @@ const Login = () => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <p style={{ p: 1, textAlign: "center", color: "red", boxShadow: 3 }}>
-        {error}
-      </p>
-
       <div>
         <Field
           name="userName"

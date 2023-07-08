@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import { logedInOut } from "./authSlice";
+import toast, { Toaster } from "react-hot-toast";
 const EXTERNAL_API = `http://localhost:8000/unit`;
-// const token = JSON.parse(localStorage.getItem("token"));
 
 export const retriveUnits = createAsyncThunk(
   "unit/getUnits",
@@ -114,7 +113,29 @@ export const removeUnit = createAsyncThunk(
       if (data.error) {
         return rejectWithValue(data);
       } else {
-        return id;
+        return data;
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+export const getUnitsCount = createAsyncThunk(
+  "unit/getUnitsCount",
+  async (_, thunkAPI) => {
+    const { rejectWithValue, getState } = thunkAPI;
+    const token = getState().auth.token;
+    const headers = { Authorization: `anas__${token}` };
+    try {
+      const res = await fetch(`${EXTERNAL_API}/count`, {
+        method: "GET",
+        headers,
+      });
+      const data = await res.json();
+      if (data.error) {
+        return rejectWithValue(data);
+      } else {
+        return data;
       }
     } catch (err) {
       return rejectWithValue(err.message);
@@ -124,7 +145,13 @@ export const removeUnit = createAsyncThunk(
 
 const unitSlice = createSlice({
   name: "unit",
-  initialState: { units: [], targetUnit: "", isLoading: false, error: "" },
+  initialState: {
+    units: [],
+    targetUnit: "",
+    isLoading: false,
+    error: "",
+    unitsCount: 0,
+  },
   extraReducers: {
     //Get unit List
     [retriveUnits.pending]: (state, action) => {
@@ -157,10 +184,14 @@ const unitSlice = createSlice({
     [insertNewUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.units.push(action.payload.newUnit);
+      toast.success(action.payload.message);
     },
     [insertNewUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     //updateUnit
     [updateUnit.pending]: (state, action) => {
@@ -171,10 +202,14 @@ const unitSlice = createSlice({
       const { id } = action.meta.arg;
       const targetIndex = state.units.findIndex((c) => c._id === id);
       state.units[targetIndex] = action.payload.updatedUnit;
+      toast.success(action.payload.message);
     },
     [updateUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
     //delete unit
     [removeUnit.pending]: (state, action) => {
@@ -182,11 +217,32 @@ const unitSlice = createSlice({
     },
     [removeUnit.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.units = state.units.filter((unit) => unit._id !== action.payload);
+      state.units = state.units.filter(
+        (unit) => unit._id !== action.payload.deletedUnit._id
+      );
+      toast.success(action.payload.message);
     },
     [removeUnit.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.payload.error;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
+    },
+    //get units Count
+    [getUnitsCount.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [getUnitsCount.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.unitsCount = action.payload.count;
+    },
+    [getUnitsCount.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload.error
+        ? action.payload.error
+        : action.payload;
+      toast.error(state.error);
     },
   },
 });

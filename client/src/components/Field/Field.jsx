@@ -6,7 +6,7 @@ const Field = ({ name, type = "text", onChange, onBlur, value }) => {
     <FormControl position="start" fullWidth variant="outlined" sx={{ p: 1 }}>
       <InputLabel>{name}</InputLabel>
       <OutlinedInput
-        sx={{ height: 60 }}
+        sx={{ height: 40 }}
         id={name}
         name={name}
         type={type}

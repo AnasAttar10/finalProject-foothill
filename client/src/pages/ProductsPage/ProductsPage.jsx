@@ -1,6 +1,6 @@
 import Container from "../../components/Containerr/Container";
 import Table from "../../components/Table/Table";
-import data from "../../data.json";
+import toast, { Toaster } from "react-hot-toast";
 import Filter from "../../components/Filter/Filter";
 import { Button } from "@mui/material";
 import AddProduct from "../../components/AddProduct/AddProduct";
@@ -10,26 +10,27 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { retriveProducts } from "../../redux/productSlice";
 import withGuard from "../../utils/withGuard";
-import ShowErrors from "../../components/ShowErrors/ShowErrors";
 const ProductsPage = ({
   isUpdateForm,
   setIsUpdateForm,
-  updatedItemId,
   setUpdatedItemId,
   showModal,
   setShowModal,
   closeModal,
+  dispatch,
 }) => {
   const { products, targetProduct, isLoading, error } = useSelector(
     (state) => state.product
   );
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retriveProducts());
   }, [dispatch, products?.length]);
   return (
     <>
-      <ShowErrors error={error} />
+      <div>
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"
