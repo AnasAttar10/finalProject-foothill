@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsersCount } from "../redux/authSlice";
 import { getProductsCount } from "../redux/productSlice";
@@ -18,56 +18,71 @@ const Home = () => {
     dispatch(getUnitsCount());
   }, [dispatch]);
   return (
-    <Box
+    <Grid
+      container
       sx={{
         display: "flex",
+        justifyContent: "center",
         flexWrap: "wrap",
         textAlign: "center",
         fontSize: "30px",
+        gap: "1%",
         color: "white",
       }}
     >
-      <div
-        style={{
-          width: "48%",
+      <Grid
+        item
+        xs={12}
+        md={5.5}
+        sx={{
+          // width: "48%",
           padding: "40px",
           margin: "1%",
           backgroundColor: "#29CAE9",
         }}
       >
         Users +{usersCount}
-      </div>
-      <div
-        style={{
-          width: "48%",
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={5.5}
+        sx={{
+          // width: "48%",
           padding: "40px",
           margin: "1%",
           backgroundColor: "#355277",
         }}
       >
         Products +{productsCount}
-      </div>
-      <div
-        style={{
-          width: "48%",
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={5.5}
+        sx={{
+          // width: "48%",
           padding: "40px",
           margin: "1%",
           backgroundColor: "#25AF7D",
         }}
       >
         Categories +{categoriesCount}
-      </div>
-      <div
-        style={{
-          width: "48%",
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={5.5}
+        sx={{
+          // width: "48%",
           padding: "40px",
           margin: "1%",
           backgroundColor: "#FF536A",
         }}
       >
         Units +{unitsCount}
-      </div>
-    </Box>
+      </Grid>
+    </Grid>
   );
 };
 

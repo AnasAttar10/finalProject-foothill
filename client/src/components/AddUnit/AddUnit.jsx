@@ -38,7 +38,17 @@ const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch, setShowModal }) => {
     },
   });
   return (
-    <form onSubmit={formik.handleSubmit} style={{ padding: "10px" }}>
+    <form
+      onSubmit={formik.handleSubmit}
+      style={{
+        padding: "10px",
+        // width: "100%",
+        // height: "100%",
+        // display: "flex",
+        // flexDirection: "column",
+        // justifyContent: "space-between",
+      }}
+    >
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
         {isUpdateForm ? "Update " : "Add "}unit
       </h2>

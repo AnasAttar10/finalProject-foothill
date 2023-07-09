@@ -33,6 +33,7 @@ const RegisterForm = () => {
   };
   const [imageFile, setImageFile] = useState("");
   const [imageName, setImageName] = useState("");
+  const [image, setImage] = useState(null);
   const formik = useFormik({
     initialValues: {
       userName: "",
@@ -204,7 +205,8 @@ const RegisterForm = () => {
           }}
           src={
             imageFile
-              ? require(`../../assets/${imageName}`)
+              ? // ? require(`../../assets/${imageName}`)
+                image
               : require("../../assets/empty.jpg")
           }
           alt="empty_image"
@@ -213,7 +215,10 @@ const RegisterForm = () => {
         <input
           type="file"
           onChange={(e) => {
-            setImageName(e.currentTarget.files[0].name);
+            // setImageName(e.currentTarget.files[0].name);
+            if (e.target.files && e.target.files[0]) {
+              setImage(URL.createObjectURL(e.target.files[0]));
+            }
             setImageFile(e.currentTarget.files[0]);
             formik.setFieldValue("profilePicture", e.currentTarget.files[0]);
           }}

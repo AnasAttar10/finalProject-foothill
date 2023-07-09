@@ -18,10 +18,11 @@ import { retriveUnits } from "../../redux/unitSlice";
 const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
   const { categories } = useSelector((state) => state.category);
   const { units } = useSelector((state) => state.unit);
-  const [imageFile, setImageFile] = useState("");
-  const [imageName, setImageName] = useState(
-    itemToUpdate && isUpdateForm ? itemToUpdate.image : ""
+  const [image, setImage] = useState(
+    itemToUpdate && isUpdateForm ? itemToUpdate.image : null
   );
+  const [isChangedImage, setIsChangedImage] = useState(false);
+
   const categoryNames = categories.map((c) => c.name);
   const categoryIds = categories.map((c) => c._id);
   const unitNames = units.map((c) => c.name);
@@ -53,16 +54,20 @@ const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
     onSubmit: async (values, { resetForm }) => {
       // alert(JSON.stringify(values, null, 2));
       const productPicture = values.image;
-      if (imageFile) values.image = "12";
-
       if (isUpdateForm) {
         const id = itemToUpdate._id;
-        dispatch(updateProduct({ id, updatedProduct: values }));
+        if (isChangedImage) {
+          values.image = "Q";
+          dispatch(updateProduct({ id, updatedProduct: values }));
+          await dispatch(uploadProductPicture({ productPicture }));
+        } else {
+          dispatch(updateProduct({ id, updatedProduct: values }));
+        }
       } else {
+        values.image = "Q";
         const result = await dispatch(insertNewProduct(values));
+        await dispatch(uploadProductPicture({ productPicture }));
       }
-      if (imageFile) await dispatch(uploadProductPicture({ productPicture }));
-
       resetForm();
       setShowModal(false);
     },
@@ -77,12 +82,10 @@ const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
       onSubmit={formik.handleSubmit}
       style={{
         padding: "10px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
+        width: "100%",
       }}
     >
-      <div style={{ width: "50%" }}>
+      <div>
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
           {isUpdateForm ? "Update " : "Add "} product
         </h2>
@@ -152,44 +155,27 @@ const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
             errors={formik.errors.unitOfMeasure}
           />
         </div>
-        <Button
-          variant="contained"
-          type="submit"
-          sx={{ m: 1 }}
-          endIcon={<SaveIcon />}
-        >
-          save
-        </Button>
       </div>
-      <div style={{ width: "50%", height: "100%" }}>
+      <div>
         <img
           style={{
             width: "100%",
-            height: "100%",
+            height: "25vh",
             boxShadow: 3,
             border: "1px solid #8888",
           }}
-          src={
-            itemToUpdate && isUpdateForm
-              ? imageFile
-                ? require(`../../assets/${imageName}`)
-                : imageName
-              : imageFile
-              ? require(`../../assets/${imageName}`)
-              : require("../../assets/empty.jpg")
-          }
+          src={image === null ? require("../../assets/empty.jpg") : image}
           alt="empty_image"
-          width={"100%"}
-          height={"100%"}
         />
         <label> Upload File</label>
         <input
           type="file"
-          // name="image"
-          // accept="image/*"
           onChange={(e) => {
-            setImageName(e.currentTarget.files[0].name);
-            setImageFile(e.currentTarget.files[0]);
+            if (e.target.files && e.target.files[0]) {
+              setImage(URL.createObjectURL(e.target.files[0]));
+            }
+            setIsChangedImage(true);
+
             formik.setFieldValue("image", e.currentTarget.files[0]);
           }}
         />
@@ -198,6 +184,14 @@ const AddProduct = ({ isUpdateForm, itemToUpdate, setShowModal, dispatch }) => {
           errors={formik.errors.image}
         />
       </div>
+      <Button
+        variant="contained"
+        type="submit"
+        sx={{ m: 1 }}
+        endIcon={<SaveIcon />}
+      >
+        save
+      </Button>
     </form>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,7 +7,6 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import Field from "../Field/Field";
 import {
   insertNewCategory,
-  retriveCategory,
   uploadCategoryPicture,
 } from "../../redux/categorySlice";
 import { updateCategory } from "../../redux/categorySlice";
@@ -17,10 +16,10 @@ const AddCategories = ({
   dispatch,
   setShowModal,
 }) => {
-  const [imageFile, setImageFile] = useState("");
-  const [imageName, setImageName] = useState(
-    itemToUpdate && isUpdateForm ? itemToUpdate.image : ""
+  const [image, setImage] = useState(
+    itemToUpdate && isUpdateForm ? itemToUpdate.image : null
   );
+  const [isChangedImage, setIsChangedImage] = useState(false);
   const formik = useFormik({
     initialValues: {
       name: itemToUpdate && isUpdateForm ? itemToUpdate.name : "",
@@ -37,15 +36,20 @@ const AddCategories = ({
     onSubmit: async (values, { resetForm }) => {
       // alert(JSON.stringify(values, null, 2));
       const categoryPicture = values.image;
-      if (imageFile) values.image = "12";
       if (isUpdateForm) {
         const id = itemToUpdate._id;
-        dispatch(updateCategory({ id, newCategory: values }));
+        if (isChangedImage) {
+          values.image = "Q";
+          dispatch(updateCategory({ id, newCategory: values }));
+          await dispatch(uploadCategoryPicture({ categoryPicture }));
+        } else {
+          dispatch(updateCategory({ id, newCategory: values }));
+        }
       } else {
+        values.image = "Q";
         const result = await dispatch(insertNewCategory(values));
+        await dispatch(uploadCategoryPicture({ categoryPicture }));
       }
-      if (imageFile) await dispatch(uploadCategoryPicture({ categoryPicture }));
-
       resetForm();
       setShowModal(false);
     },
@@ -55,12 +59,14 @@ const AddCategories = ({
       onSubmit={formik.handleSubmit}
       style={{
         padding: "10px",
+        width: "100%",
+        height: "100%",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "space-between",
-        alignItems: "center",
       }}
     >
-      <div style={{ width: "70%" }}>
+      <div style={{ width: "100%" }}>
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
           {isUpdateForm ? "Update " : "Add "} category
         </h2>
@@ -76,42 +82,26 @@ const AddCategories = ({
             errors={formik.errors.name}
           />
         </div>
-        <Button
-          variant="contained"
-          sx={{ m: 1 }}
-          type="submit"
-          endIcon={<SaveIcon />}
-        >
-          Save
-        </Button>
       </div>
-      <div style={{ width: "50%" }}>
+      <div>
         <img
           style={{
             width: "100%",
-            height: "100%",
+            height: "30vh",
             boxShadow: 3,
             border: "1px solid #8888",
           }}
-          src={
-            itemToUpdate && isUpdateForm
-              ? imageFile
-                ? require(`../../assets/${imageName}`)
-                : imageName
-              : imageFile
-              ? require(`../../assets/${imageName}`)
-              : require("../../assets/empty.jpg")
-          }
+          src={image === null ? require("../../assets/empty.jpg") : image}
           alt="empty_image"
         />
         <label> Upload File</label>
         <input
           type="file"
-          // name="image"
-          // accept="image/*"
           onChange={(e) => {
-            setImageName(e.currentTarget.files[0].name);
-            setImageFile(e.currentTarget.files[0]);
+            if (e.target.files && e.target.files[0]) {
+              setImage(URL.createObjectURL(e.target.files[0]));
+            }
+            setIsChangedImage(true);
             formik.setFieldValue("image", e.currentTarget.files[0]);
           }}
         />
@@ -120,6 +110,14 @@ const AddCategories = ({
           errors={formik.errors.image}
         />
       </div>
+      <Button
+        variant="contained"
+        sx={{ m: 1 }}
+        type="submit"
+        endIcon={<SaveIcon />}
+      >
+        Save
+      </Button>
     </form>
   );
 };

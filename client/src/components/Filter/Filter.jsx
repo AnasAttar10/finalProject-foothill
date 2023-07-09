@@ -7,7 +7,7 @@ const Filter = () => {
   return (
     <Box
       sx={{
-        width: "40%",
+        width: "60%",
         border: "none",
       }}
       component="form"
