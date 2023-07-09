@@ -64,10 +64,8 @@ const RegisterForm = () => {
       delete values["confirmpassword"];
       const valuesWithoutConfirmPassword = values;
       const profilePicture = values.profilePicture;
-
-      values.profilePicture = "12";
+      values.profilePicture = "Q";
       const result = await dispatch(signUp(valuesWithoutConfirmPassword));
-
       await dispatch(uploadUserPicture({ profilePicture }));
       const success = localStorage.getItem("success");
       if (success) navigate("/login");
