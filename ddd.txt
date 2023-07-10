@@ -1,7 +1,0 @@
-    "react-lazy-load-image-component": "^1.6.0",
-    "react-router-dom": "^6.13.0",
-    "axios": "^1.4.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.13.5",
