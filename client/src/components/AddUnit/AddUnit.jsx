@@ -21,9 +21,7 @@ const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch, setShowModal }) => {
       baseUnit: Yup.string()
         .max(15, "Must be 15 characters or less")
         .required("Required"),
-      conversionFactor: Yup.number()
-        .min(1, "Must be 1 or more")
-        .required("Required"),
+      conversionFactor: Yup.number().required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
       // alert(JSON.stringify(values, null, 2));
@@ -42,11 +40,6 @@ const AddUnit = ({ isUpdateForm, itemToUpdate, dispatch, setShowModal }) => {
       onSubmit={formik.handleSubmit}
       style={{
         padding: "10px",
-        // width: "100%",
-        // height: "100%",
-        // display: "flex",
-        // flexDirection: "column",
-        // justifyContent: "space-between",
       }}
     >
       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>

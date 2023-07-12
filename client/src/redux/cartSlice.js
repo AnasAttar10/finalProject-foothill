@@ -193,11 +193,10 @@ export const removeCart = createAsyncThunk(
     const token = getState().auth.token;
     const headers = { Authorization: `anas__${token}` };
     try {
-      const res = await fetch(
-        `${EXTERNAL_API}/${id}`,
-        { method: "DELETE" },
-        { headers }
-      );
+      const res = await fetch(`${EXTERNAL_API}/${id}`, {
+        method: "DELETE",
+        headers,
+      });
       const data = await res.json();
       console.log(data);
       console.log(data);
