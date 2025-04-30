@@ -7,7 +7,7 @@ https://www.youtube.com/watch?v=pg75N4vhYb8
 To run the POS Project, ensure that you have the following prerequisites: Node.js NPM Follow these steps to install and set up the project:
    1. Clone the repository
    2. Install dependencies: npm install
-   3. Start the application : npm run dev
+   3. Start the application : npm start
 # pages :-
 ## Registration Page :
 Registration  page enables users to independently register and gain access to system by enter userName and email , password ,image .
